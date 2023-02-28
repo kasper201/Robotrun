@@ -1,5 +1,3 @@
-//Will add .h file when ready to use
-
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
 
@@ -79,12 +77,22 @@ void initRobot()
 	lcd_goto_xy(0,1);
 	print_from_program_space(startup_line2);
 	play_from_program_space(StartupMelody);
-	delay_ms(2000);
+	delay_ms(20);
+	clear();
+	
+	set_motors(50,-50);
 	
 	//calibration
 	for(int calibrationCounter=0; calibrationCounter<180; calibrationCounter++)
 	{
-		calibrate_line_sensors(IR_EMITTERS_ON);//turns on all IR emitters
+		
+		if(calibrationCounter < 60 || calibrationCounter > 120){
+			set_motors(50,-50);
+		}
+		else{
+			set_motors(-50,50);
+		}
+		delay_ms(25);
 	}
 }
 
