@@ -4,7 +4,7 @@
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
 const char startup_line2[] PROGMEM = "KARBONKEL";
-const char startup_line3[] PROGMEM = "ARBONKEL";
+const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 //Until line 80 everything is for testing purposes
@@ -77,27 +77,50 @@ void initRobot()
 	lcd_goto_xy(0,1);
 	print_from_program_space(startup_line2);
 	play_from_program_space(StartupMelody);
-	delay_ms(20);
+	delay_ms(1000);
+	
 	clear();
+	print_from_program_space(startup_line3);
+	delay_ms(2000);
 	
-	set_motors(50,-50);
-	
-	//calibration
-	for(int calibrationCounter=0; calibrationCounter<180; calibrationCounter++)
-	{
-		
-		if(calibrationCounter < 60 || calibrationCounter > 120){
+	clear();
+	print("Press B");
+	wait_for_button_press(BUTTON_B);
+	clear();
+	wait_for_button_release(BUTTON_B);
+		//calibration
+	for(int calibrationCounter=0; calibrationCounter<113; calibrationCounter++)
+	{		
+		if(calibrationCounter < 30 || calibrationCounter > 85){
 			set_motors(50,-50);
 		}
 		else{
 			set_motors(-50,50);
 		}
-		delay_ms(25);
+		delay_ms(25);			
 	}
+	set_motors(0,0);
+	
+	print("Press B");
+	lcd_goto_xy(0,1);
+	print("to start");
+	wait_for_button_press(BUTTON_B);
+	while(button_is_pressed(BUTTON_B)){
+		clear();
+		print("Let go");
+		lcd_goto_xy(0,1);
+		print("to start");
+		delay_ms(1000);
+	}
+	
+	clear();
+	print("GO!!");
+	play("L4 MSD.D.D R8 ! O5 G2. R8" );
+	delay(3500);
+
 }
 
-// This is the main function, where the code starts.  All C programs
-// must have a main() function defined somewhere.
+// This is the main function and will be left out when done
 int main()
 {
 	initRobot();
