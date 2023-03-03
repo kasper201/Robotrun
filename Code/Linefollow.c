@@ -1,7 +1,8 @@
 /*
 The code will output if the left sensor found a line and if the right sensor has found a line, this will most likely be done using pointers making them necessary for the input aswell.
-Further more the code will output the thickness of the line
+Further more the code will output the thickness of the line and maybe sensors 6 and 7 for object detection
 */
+
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
 
@@ -13,11 +14,11 @@ const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 void initRobot()
 {
+	unsigned char noCrossing= 1;
 	unsigned int counter;
-	unsigned int sensors[5]; // the other 2 will be done differently and are currently out of the scope of this code
+	unsigned int sensors[7]; // sensors 6 and 7 are not used in this code but will probably be returned
 	
 	pololu_3pi_init(2000);
-	load_custom_characters();
 	
 	//play welcome line
 	print_from_program_space(startup_line1);
@@ -39,10 +40,10 @@ void initRobot()
 	for(int calibrationCounter=0; calibrationCounter<113; calibrationCounter++)
 	{
 		if(calibrationCounter < 30 || calibrationCounter > 85){
-			set_motors(50,-50);
+			set_motors(30,-30);
 		}
 		else{
-			set_motors(-50,50);
+			set_motors(-30,30);
 		}
 		calibrate_line_sensors(IR_EMITTERS_ON);
 		delay_ms(25);
@@ -55,8 +56,7 @@ void initRobot()
 	print("to start");
 	while(!button_is_pressed(BUTTON_B))
 	{
-		//unsigned int PositionLine = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into a value between 0 and 4000.
-		display_readings(sensors);
+		
 	}
 	while(button_is_pressed(BUTTON_B)){
 		clear();
@@ -70,7 +70,15 @@ void initRobot()
 	print("GO!!");
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
 	delay(3500);
-
+	
+	while(noCrossing)
+	{
+		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
+		int leftSpeed = 200-(sensors[1]/10);
+		int rightSpeed = 200-(sensors[3]/10);
+		
+		set_motors(leftSpeed, rightSpeed);
+	}
 }
 
 // This is the main function and will be left out when done
