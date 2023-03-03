@@ -14,7 +14,6 @@ const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 void initRobot()
 {
-	unsigned char noCrossing= 1;
 	unsigned int counter;
 	unsigned int sensors[7]; // sensors 6 and 7 are not used in this code but will probably be returned
 	
@@ -49,7 +48,11 @@ void initRobot()
 		delay_ms(25);
 	}
 	set_motors(0,0);
-	
+}
+
+void followLine()
+{
+	unsigned char noCrossing= 1;
 	
 	print("Press B");
 	lcd_goto_xy(0,1);
@@ -80,11 +83,11 @@ void initRobot()
 		set_motors(leftSpeed, rightSpeed);
 	}
 }
-
 // This is the main function and will be left out when done
 int main()
 {
 	initRobot();
+	followLine();
 	
 	while(1){
 		set_motors(0,0);
