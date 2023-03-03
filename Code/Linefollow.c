@@ -97,6 +97,7 @@ void initRobot()
 		else{
 			set_motors(-50,50);
 		}
+		calibrate_line_sensors(IR_EMITTERS_ON);
 		delay_ms(25);			
 	}
 	set_motors(0,0);
