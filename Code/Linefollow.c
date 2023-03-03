@@ -88,9 +88,9 @@ void initRobot()
 	wait_for_button_press(BUTTON_B);
 	clear();
 	wait_for_button_release(BUTTON_B);
-		//calibration
+	//calibration
 	for(int calibrationCounter=0; calibrationCounter<113; calibrationCounter++)
-	{		
+	{
 		if(calibrationCounter < 30 || calibrationCounter > 85){
 			set_motors(50,-50);
 		}
@@ -98,14 +98,19 @@ void initRobot()
 			set_motors(-50,50);
 		}
 		calibrate_line_sensors(IR_EMITTERS_ON);
-		delay_ms(25);			
+		delay_ms(25);
 	}
 	set_motors(0,0);
+	
 	
 	print("Press B");
 	lcd_goto_xy(0,1);
 	print("to start");
-	wait_for_button_press(BUTTON_B);
+	while(!button_is_pressed(BUTTON_B))
+	{
+		//unsigned int PositionLine = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into a value between 0 and 4000.
+		display_readings(sensors);
+	}
 	while(button_is_pressed(BUTTON_B)){
 		clear();
 		print("Let go");
