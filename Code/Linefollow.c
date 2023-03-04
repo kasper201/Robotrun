@@ -13,10 +13,7 @@ const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 void initRobot()
-{
-	unsigned int counter;
-	unsigned int sensors[7]; // sensors 6 and 7 are not used in this code but will probably be returned
-	
+{	
 	pololu_3pi_init(2000);
 	
 	//play welcome line
@@ -52,16 +49,14 @@ void initRobot()
 
 void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and including 4
 {
-	int leftCorner = 0;
-	int rightCorner = 0;
+	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
 	
-	print("Press B");
-	lcd_goto_xy(0,1);
-	print("to start");
 	while(!button_is_pressed(BUTTON_B))
 	{
-		
+		print("Press B");
+		lcd_goto_xy(0,1);
+		print("to start");
 	}
 	while(button_is_pressed(BUTTON_B)){
 		clear();
@@ -78,25 +73,55 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 	
 	while(noCrossing)
 	{
+		int delaycheck = 50;
+		clear();
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		int leftSpeed = 200-(sensors[1]/10);
-		int rightSpeed = 200-(sensors[3]/10);
+		int leftSpeed = 200-((sensors[1]/10) * 0.8);
+		int rightSpeed = 200-((sensors[3]/10) * 0.8);
 		
-		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250){ //checks if T-split normal
-			*TypeOfCrossing = 1;//T-normal
-			noCrossing = 0;
+		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250){ //checks if T-split normal
+			delay_ms(delaycheck);
+			if(sensors[2] >= 500){
+				continue;
+			}
+			else{
+				*TypeOfCrossing = 1;//T-normal
+				print("T-norm");
+				noCrossing = 0;//false
+			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250){ //checks if T-split on its side to the left
-			*TypeOfCrossing = 2;//T-left
-			noCrossing = 0;
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 && sensors[1] <= 250 && sensors[3] <= 250){ //checks if T-split on its side to the left
+			delay_ms(delaycheck);
+			if(sensors[4] >= 500){
+				continue;
+			}
+			else{
+				*TypeOfCrossing = 2;//T-left
+				print("T-left");
+				noCrossing = 0;//false
+			}
 		}
-		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensor[0] <= 250){ //checks if T-split on its side to the right
-			*TypeOfCrossing = 3;//T-right
-			noCrossing = 0;
+		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250){ //checks if T-split on its side to the right
+			delay_ms(delaycheck);
+			if(sensors[0] >= 500){
+				continue;
+			}
+			else{
+				*TypeOfCrossing = 3;//T-right
+				print("T-right");
+				noCrossing = 0;//false
+			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750){ //checks if at a cross-crossing
-			*TypeOfCrossing = 4;//Cross
-			noCrossing = 0;
+		else if(sensors[0] >= 750 && sensors[2] >= 500 && sensors[4] >= 500){ //checks if at a cross-crossing
+			delay_ms(delaycheck);
+			if(sensors[2] <= 500){
+				continue;
+			}	
+			else{
+				*TypeOfCrossing = 4;//Cross
+				print("Cross");
+				noCrossing = 0;//false
+			}
 		}
 		else{
 			*TypeOfCrossing = 0; //no Crossing
@@ -105,7 +130,7 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 		if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250){ // Check if the left most bottom sensor is the only big turn sensor above line
 			leftSpeed = -20;
 		}
-		else if(sensors[0] <= 250 && sensors[2] <= 250 && sensors[4] >= 750 &&){ //Check if the right most bottom sensor is the only big turn sensor above line
+		else if(sensors[0] <= 250 && sensors[2] <= 250 && sensors[4] >= 750){ //Check if the right most bottom sensor is the only big turn sensor above line
 			rightSpeed = -20;
 		}
 		
@@ -115,8 +140,9 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 // This is the main function and will be left out when done
 int main()
 {
+	int TypeOfCrossing = 0;
 	initRobot();
-	followLine();
+	followLine(&TypeOfCrossing);
 	
 	while(1){
 		set_motors(0,0);
