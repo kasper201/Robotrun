@@ -50,9 +50,11 @@ void initRobot()
 	set_motors(0,0);
 }
 
-void followLine()
+void followLine(int *TypeOfCrossing) 
 {
-	unsigned char noCrossing= 1;
+	int leftCorner = 0;
+	int rightCorner = 0;
+	unsigned char noCrossing = 1;
 	
 	print("Press B");
 	lcd_goto_xy(0,1);
@@ -79,6 +81,26 @@ void followLine()
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		int leftSpeed = 200-(sensors[1]/10);
 		int rightSpeed = 200-(sensors[3]/10);
+		
+		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250){ //checks if T-split normal
+			noCrossing = 0;
+		}
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250){ //checks if T-split on its side to the left
+			noCrossing = 0;
+		}
+		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensor[0] <= 250){ //checks if T-split on its side to the right
+			noCrossing = 0;
+		}
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750){ //checks if at a cross-crossing
+			noCrossing = 0;
+		}
+		
+		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250){ // Check if the left msot bottom sensor is the only big turn sensor above line
+			leftSpeed = -20;
+		}
+		else if(sensors[0] <= 250 && sensors[2] <= 250 && sensors[4] >= 750 &&){ //Check if the right most bottom sensor is the only big turn sensor above line
+			rightSpeed = -20;
+		}
 		
 		set_motors(leftSpeed, rightSpeed);
 	}
