@@ -35,9 +35,9 @@ void initRobot()
 	//calibration
 	for(int calibrationCounter = 0; calibrationCounter < 113; calibrationCounter++)
 	{
-		print("Calibr-");
+		print("Cali-");
 		lcd_goto_xy(0,1);
-		print("ating   ");
+		print("brating ");
 		if(calibrationCounter < 30 || calibrationCounter > 85){
 			set_motors(30,-30);
 		}
@@ -68,49 +68,47 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		{
 			*TypeOfCrossing = 1;//T-normal
 			delay_ms(delaycheck);
-			if(sensors[2] >= 500)
+			if(sensors[0] >= 500 || sensors [4] >= 500)
 			{
 				continue;
 			}
 			else
 			{
 				print("T-norm");
-				noCrossing = 0;//false
+				noCrossing = 0;//exits loop
 			}
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
 		{
 			*TypeOfCrossing = 2;//T-left
 			delay_ms(delaycheck);
-			if(sensors[4] >= 500)
+			if(sensors[0] >= 500 || sensors[2] >= 500)
 			{
 				continue;
 			}
 			else
 			{
 				print("T-left");
-				noCrossing = 0;//false
+				noCrossing = 0;//exits loop
 			}
 		}
 		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
 		{
 			*TypeOfCrossing = 3;//T-right
-			delay_ms(delaycheck);
-			if(sensors[0] >= 500)
+			if(sensors[4] >= 500 || sensors[2] >= 500)
 			{
 				continue;
 			}
 			else
 			{
 				print("T-right");
-				noCrossing = 0;//false
+				noCrossing = 0;//exits loop
 			}
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing
 		{
 			*TypeOfCrossing = 4;//Cross
-			delay_ms(delaycheck);
-			if(sensors[2] >= 500)
+			if(sensors[0] >= 500 || sensors[4] >= 500)
 			{
 				continue;
 			}
@@ -118,7 +116,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 			{
 				
 				print("Cross");
-				noCrossing = 0;//false
+				noCrossing = 0;//exits loop
 			}
 		}
 		else if(sensors[0] <= 250 && sensors[1] <= 250 && sensors[2] <= 250 && sensors[3] <= 250 && sensors[4] <= 250)//off the planeto
@@ -134,7 +132,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				print("off of");
 				lcd_goto_xy(0,1);
 				print("line");
-				noCrossing = 0;
+				noCrossing = 0;//exits loop
 			}
 		}
 		else
@@ -177,7 +175,7 @@ int main()
 	clear();
 	print("GO!!");
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
-	delay(3500);
+	delay(3300);
 	
 	followLine(&TypeOfCrossing);
 	
