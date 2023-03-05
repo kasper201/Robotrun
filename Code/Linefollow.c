@@ -51,21 +51,22 @@ void initRobot()
 	set_motors(0,0);
 }
 
-void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and including 4
+void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 up to and including 4
 {
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
 	
 	while(noCrossing)
 	{
-		int delaycheck = 50;
+		int delaycheck = 100;
 		clear();
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		int leftSpeed = 150-((sensors[1]/10) * 0.8);
 		int rightSpeed = 150-((sensors[3]/10) * 0.8);
 		
 		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
-		{ 
+		{
+			*TypeOfCrossing = 1;//T-normal
 			delay_ms(delaycheck);
 			if(sensors[2] >= 500)
 			{
@@ -73,13 +74,13 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 			}
 			else
 			{
-				*TypeOfCrossing = 1;//T-normal
 				print("T-norm");
 				noCrossing = 0;//false
 			}
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
-		{ 
+		{
+			*TypeOfCrossing = 2;//T-left
 			delay_ms(delaycheck);
 			if(sensors[4] >= 500)
 			{
@@ -87,13 +88,13 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 			}
 			else
 			{
-				*TypeOfCrossing = 2;//T-left
 				print("T-left");
 				noCrossing = 0;//false
 			}
 		}
 		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
-		{ 
+		{
+			*TypeOfCrossing = 3;//T-right
 			delay_ms(delaycheck);
 			if(sensors[0] >= 500)
 			{
@@ -101,32 +102,40 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 			}
 			else
 			{
-				*TypeOfCrossing = 3;//T-right
 				print("T-right");
 				noCrossing = 0;//false
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 500 && sensors[4] >= 500) //checks if at a cross-crossing
-		{ 
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing
+		{
+			*TypeOfCrossing = 4;//Cross
 			delay_ms(delaycheck);
-			if(sensors[2] <= 500)
+			if(sensors[2] >= 500)
 			{
 				continue;
 			}
 			else
 			{
-				*TypeOfCrossing = 4;//Cross
+				
 				print("Cross");
 				noCrossing = 0;//false
 			}
 		}
 		else if(sensors[0] <= 250 && sensors[1] <= 250 && sensors[2] <= 250 && sensors[3] <= 250 && sensors[4] <= 250)//off the planeto
 		{
-			*TypeOfCrossing = 5;//not on any line
-			print("off of");
-			lcd_goto_xy(0,1);
-			print("line");
-			noCrossing = 0;
+			delay_ms(20);
+			if(TypeOfCrossing > 0 && TypeOfCrossing < 5)
+			{
+				continue;
+			}
+			else
+			{
+				*TypeOfCrossing = 5;//not on any line
+				print("off of");
+				lcd_goto_xy(0,1);
+				print("line");
+				noCrossing = 0;
+			}
 		}
 		else
 		{
