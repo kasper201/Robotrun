@@ -33,8 +33,11 @@ void initRobot()
 	clear();
 	wait_for_button_release(BUTTON_B);
 	//calibration
-	for(int calibrationCounter=0; calibrationCounter<113; calibrationCounter++)
+	for(int calibrationCounter = 0; calibrationCounter < 113; calibrationCounter++)
 	{
+		print("Calibr-");
+		lcd_goto_xy(0,1);
+		print("ating   ");
 		if(calibrationCounter < 30 || calibrationCounter > 85){
 			set_motors(30,-30);
 		}
@@ -44,6 +47,7 @@ void initRobot()
 		calibrate_line_sensors(IR_EMITTERS_ON);
 		delay_ms(25);
 	}
+	clear();
 	set_motors(0,0);
 }
 
@@ -52,78 +56,80 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
 	
-	while(!button_is_pressed(BUTTON_B))
-	{
-		print("Press B");
-		lcd_goto_xy(0,1);
-		print("to start");
-	}
-	while(button_is_pressed(BUTTON_B)){
-		clear();
-		print("Let go");
-		lcd_goto_xy(0,1);
-		print("to start");
-		delay_ms(1000);
-	}
-	
-	clear();
-	print("GO!!");
-	play("L4 MSD.D.D R8 ! O5 G2. R8" );
-	delay(3500);
-	
 	while(noCrossing)
 	{
 		int delaycheck = 50;
 		clear();
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		int leftSpeed = 200-((sensors[1]/10) * 0.8);
-		int rightSpeed = 200-((sensors[3]/10) * 0.8);
+		int leftSpeed = 150-((sensors[1]/10) * 0.8);
+		int rightSpeed = 150-((sensors[3]/10) * 0.8);
 		
-		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250){ //checks if T-split normal
+		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
+		{ 
 			delay_ms(delaycheck);
-			if(sensors[2] >= 500){
+			if(sensors[2] >= 500)
+			{
 				continue;
 			}
-			else{
+			else
+			{
 				*TypeOfCrossing = 1;//T-normal
 				print("T-norm");
 				noCrossing = 0;//false
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ){ //checks if T-split on its side to the left
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
+		{ 
 			delay_ms(delaycheck);
-			if(sensors[4] >= 500){
+			if(sensors[4] >= 500)
+			{
 				continue;
 			}
-			else{
+			else
+			{
 				*TypeOfCrossing = 2;//T-left
 				print("T-left");
 				noCrossing = 0;//false
 			}
 		}
-		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250){ //checks if T-split on its side to the right
+		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
+		{ 
 			delay_ms(delaycheck);
-			if(sensors[0] >= 500){
+			if(sensors[0] >= 500)
+			{
 				continue;
 			}
-			else{
+			else
+			{
 				*TypeOfCrossing = 3;//T-right
 				print("T-right");
 				noCrossing = 0;//false
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 500 && sensors[4] >= 500){ //checks if at a cross-crossing
+		else if(sensors[0] >= 750 && sensors[2] >= 500 && sensors[4] >= 500) //checks if at a cross-crossing
+		{ 
 			delay_ms(delaycheck);
-			if(sensors[2] <= 500){
+			if(sensors[2] <= 500)
+			{
 				continue;
 			}
-			else{
+			else
+			{
 				*TypeOfCrossing = 4;//Cross
 				print("Cross");
 				noCrossing = 0;//false
 			}
 		}
-		else{
+		else if(sensors[0] <= 250 && sensors[1] <= 250 && sensors[2] <= 250 && sensors[3] <= 250 && sensors[4] <= 250)//off the planeto
+		{
+			*TypeOfCrossing = 5;//not on any line
+			print("off of");
+			lcd_goto_xy(0,1);
+			print("line");
+			noCrossing = 0;
+		}
+		else
+		{
 			*TypeOfCrossing = 0; //no Crossing
 		}
 		
@@ -144,6 +150,26 @@ int main()
 {
 	int TypeOfCrossing = 0;
 	initRobot();
+	
+	while(!button_is_pressed(BUTTON_B))
+	{
+		print("Press B");
+		lcd_goto_xy(0,1);
+		print("to start");
+	}
+	while(button_is_pressed(BUTTON_B)){
+		clear();
+		print("Let go");
+		lcd_goto_xy(0,1);
+		print("to start");
+		delay_ms(1000);
+	}
+	
+	clear();
+	print("GO!!");
+	play("L4 MSD.D.D R8 ! O5 G2. R8" );
+	delay(3500);
+	
 	followLine(&TypeOfCrossing);
 	
 	while(1){
