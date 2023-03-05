@@ -79,7 +79,7 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 		int leftSpeed = 200-((sensors[1]/10) * 0.8);
 		int rightSpeed = 200-((sensors[3]/10) * 0.8);
 		
-		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250){ //checks if T-split normal
+		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250){ //checks if T-split normal
 			delay_ms(delaycheck);
 			if(sensors[2] >= 500){
 				continue;
@@ -112,7 +112,7 @@ void followLine(int *TypeOfCrossing) //0 if no crossing otherwise 1 up to and in
 				noCrossing = 0;//false
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 500 && sensors[4] >= 500){ //checks if at a cross-crossing
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750 && sensors[1] >= 500 && sensors[3] >= 500){ //checks if at a cross-crossing
 			delay_ms(delaycheck);
 			if(sensors[2] <= 500){
 				continue;
