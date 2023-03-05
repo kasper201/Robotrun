@@ -63,8 +63,8 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		int delaycheck = 100;
 		clear();
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		int leftSpeed = 150-(sensors[1]/10)-(sensors[0]/15);
-		int rightSpeed = 150-(sensors[3]/10)-(sensors[4]/15);
+		int leftSpeed = 110-(sensors[1]/10);
+		int rightSpeed = 110-(sensors[3]/10);
 		
 		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
 		{
