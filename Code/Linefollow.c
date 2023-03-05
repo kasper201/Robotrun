@@ -32,12 +32,14 @@ void initRobot()
 	wait_for_button_press(BUTTON_B);
 	clear();
 	wait_for_button_release(BUTTON_B);
+	play("T 180 MLCEG"); //play sound to display start of calibration
+	delay_ms(500);
 	//calibration
 	for(int calibrationCounter = 0; calibrationCounter < 113; calibrationCounter++)
 	{
-		print("Cali-");
+		print("Calib-");
 		lcd_goto_xy(0,1);
-		print("brating ");
+		print("rating  ");
 		if(calibrationCounter < 30 || calibrationCounter > 85){
 			set_motors(30,-30);
 		}
@@ -61,14 +63,13 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		int delaycheck = 100;
 		clear();
 		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		int leftSpeed = 150-((sensors[1]/10) * 0.8);
-		int rightSpeed = 150-((sensors[3]/10) * 0.8);
+		int leftSpeed = 150-(sensors[1]/10)-(sensors[0]/4);
+		int rightSpeed = 150-(sensors[3]/10)-(sensors[4]/4);
 		
-		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[2] <= 250 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
+		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
 		{
 			*TypeOfCrossing = 1;//T-normal
-			delay_ms(delaycheck);
-			if(sensors[0] >= 500 || sensors [4] >= 500)
+			if(sensors[2] >= 750 )
 			{
 				continue;
 			}
@@ -118,7 +119,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[0] <= 250 && sensors[1] <= 250 && sensors[2] <= 250 && sensors[3] <= 250 && sensors[4] <= 250)//off the planeto
+		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
 			*TypeOfCrossing = 5;//not on any line
 			print("off of");
@@ -131,14 +132,14 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 			*TypeOfCrossing = 0; //no Crossing
 		}
 		
-		if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250){ // Check if the left most bottom sensor is the only big turn sensor above line
+		/*if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250){ // Check if the left most bottom sensor is the only big turn sensor above line
 			leftSpeed = -60;
 			rightSpeed = 60;
 		}
 		else if(sensors[0] <= 250 && sensors[2] <= 250 && sensors[4] >= 750){ //Check if the right most bottom sensor is the only big turn sensor above line
 			rightSpeed = -60;
 			leftSpeed = 60;
-		}
+		}*/
 		
 		set_motors(leftSpeed, rightSpeed);
 	}
