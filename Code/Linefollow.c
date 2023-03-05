@@ -108,32 +108,23 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing
 		{
 			*TypeOfCrossing = 4;//Cross
-			if(sensors[0] >= 500 || sensors[4] >= 500)
+			if(sensors[1] >= 800 && sensors[3] >= 800)
 			{
 				continue;
 			}
 			else
-			{
-				
+			{	
 				print("Cross");
 				noCrossing = 0;//exits loop
 			}
 		}
 		else if(sensors[0] <= 250 && sensors[1] <= 250 && sensors[2] <= 250 && sensors[3] <= 250 && sensors[4] <= 250)//off the planeto
 		{
-			delay_ms(20);
-			if(TypeOfCrossing > 0 && TypeOfCrossing < 5)
-			{
-				continue;
-			}
-			else
-			{
-				*TypeOfCrossing = 5;//not on any line
-				print("off of");
-				lcd_goto_xy(0,1);
-				print("line");
-				noCrossing = 0;//exits loop
-			}
+			*TypeOfCrossing = 5;//not on any line
+			print("off of");
+			lcd_goto_xy(0,1);
+			print("line");
+			noCrossing = 0;//exits loop
 		}
 		else
 		{
@@ -156,6 +147,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 int main()
 {
 	int TypeOfCrossing = 0;
+	int turnTo = 0;
 	initRobot();
 	
 	while(!button_is_pressed(BUTTON_B))
@@ -177,7 +169,7 @@ int main()
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
 	delay(3300);
 	
-	followLine(&TypeOfCrossing);
+	followLine(&TypeOfCrossing, turnTo);
 	
 	while(1){
 		set_motors(0,0);
