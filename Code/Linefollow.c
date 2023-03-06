@@ -8,7 +8,7 @@ Further more the code will output the thickness of the line and maybe sensors 6 
 
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
-const char startup_line2[] PROGMEM = "KARBONKEL";
+const char startup_line2[] PROGMEM = "KARBONKE";
 const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
@@ -53,12 +53,75 @@ void initRobot()
 	set_motors(0,0);
 }
 
-void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 up to and including 4
+void turn(int turnTo)
+{
+	unsigned int sensors[5];
+	clear();
+	
+	read_line(sensors, IR_EMITTERS_ON);
+	int beenWhite = 0;
+	switch(turnTo)
+	{
+		case 0:
+		break;
+		
+		case 1:
+		set_motors(50, -40);
+		if(sensors[2] <= 250)
+		{
+			beenWhite = 1;
+			while(beenWhite)
+			{
+				read_line(sensors, IR_EMITTERS_ON);
+				print("white");
+				if(sensors[2] >= 750)
+				{
+					clear();
+					print("T Stop");
+					beenWhite = 0;
+					set_motors(0,0);
+					break;
+				}
+			}
+		}
+		break;
+		case 2:
+		set_motors(-40, 50);
+		if(sensors[2] <= 250)
+		{
+			beenWhite = 1;
+			while(beenWhite)
+			{
+				read_line(sensors, IR_EMITTERS_ON);
+				if(sensors[2] >= 750)
+				{
+					beenWhite = 0;
+					set_motors(0,0);
+					break;
+				}
+			}
+		}
+		break;
+	}
+}
+
+void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off of line
 {
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
 	int integral = 0;
 	int last_proportional = 0;
+	
+	if(*typeOfCrossing != 0)
+	{
+		turn(*turnTo);
+		*typeOfCrossing = 0;
+		*turnTo = 0;
+	}
+	else
+	{
+		*typeOfCrossing = 0;
+	}	
 	
 	while(noCrossing)
 	{
@@ -78,7 +141,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		
 		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
 		{
-			*TypeOfCrossing = 1;//T-normal
+			*typeOfCrossing = 1;//T-normal
 			if(sensors[2] >= 750 )
 			{
 				continue;
@@ -89,14 +152,9 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		/*else if((sensors[0] >= 750 && sensors[1] >= 750 ) || (sensors[3] >= 750 && sensors[4] >= 750))
-		{
-			*TypeOfCrossing = 5;
-			print("Corner");
-		}*/
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
 		{
-			*TypeOfCrossing = 2;//T-left
+			*typeOfCrossing = 2;//T-left
 			if(sensors[1] >= 750 || sensors[2] <= 250 )
 			{
 				continue;
@@ -109,7 +167,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		}
 		else if(sensors[3] >= 750 && sensors[2] >= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
 		{
-			*TypeOfCrossing = 3;//T-right
+			*typeOfCrossing = 3;//T-right
 			if(sensors[3] >= 750 || sensors[2] <= 250)
 			{
 				continue;
@@ -122,7 +180,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing
 		{
-			*TypeOfCrossing = 4;//Cross
+			*typeOfCrossing = 4;//Cross
 			if(sensors[1] >= 900 && sensors[3] >= 900)
 			{
 				continue;
@@ -135,7 +193,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		}
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
-			*TypeOfCrossing = 99;//not on any line
+			*typeOfCrossing = 99;//not on any line
 			print("off of");
 			lcd_goto_xy(0,1);
 			print("line");
@@ -143,7 +201,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		}
 		else
 		{
-			*TypeOfCrossing = 0; //no Crossing
+			*typeOfCrossing = 0; //no Crossing
 		}
 		
 		// m1 - m2.  If this is a positive number the robot will turn
@@ -169,8 +227,8 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 // This is the main function and will be left out when done
 int main()
 {
-	int TypeOfCrossing = 0;
-	int turnTo = 0;
+	int typeOfCrossing = 0;
+	int turnTo = 2;
 	initRobot();
 	serial_set_baud_rate(115200);
 	
@@ -191,11 +249,11 @@ int main()
 	clear();
 	print("GO!!");
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
-	delay(3300);
+	delay(3200);
 	
 	while(1)
 	{
-		followLine(&TypeOfCrossing, turnTo);
+		followLine(&typeOfCrossing, &turnTo);
 		set_motors(0,0);
 		wait_for_button_press(BUTTON_B);
 		wait_for_button_release(BUTTON_B);
