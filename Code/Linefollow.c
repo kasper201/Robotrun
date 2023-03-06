@@ -62,7 +62,6 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 	
 	while(noCrossing)
 	{
-		int delaycheck = 100;
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
@@ -90,11 +89,15 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[1] >= 750 && sensors[2] >= 750 && sensors[3] <= 250 ) //checks if T-split on its side to the left
+		/*else if((sensors[0] >= 750 && sensors[1] >= 750 ) || (sensors[3] >= 750 && sensors[4] >= 750))
+		{
+			*TypeOfCrossing = 5;
+			print("Corner");
+		}*/
+		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
 		{
 			*TypeOfCrossing = 2;//T-left
-			delay_ms(delaycheck);
-			if(sensors[0] >= 750)
+			if(sensors[1] >= 750 || sensors[2] <= 250 )
 			{
 				continue;
 			}
@@ -104,10 +107,10 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[3] >= 750 && sensors[2] >= 750 && sensors[1] <= 250) //checks if T-split on its side to the right
+		else if(sensors[3] >= 750 && sensors[2] >= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
 		{
 			*TypeOfCrossing = 3;//T-right
-			if(sensors[4] >= 750)
+			if(sensors[3] >= 750 || sensors[2] <= 250)
 			{
 				continue;
 			}
@@ -132,7 +135,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		}
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
-			*TypeOfCrossing = 5;//not on any line
+			*TypeOfCrossing = 99;//not on any line
 			print("off of");
 			lcd_goto_xy(0,1);
 			print("line");
@@ -169,6 +172,7 @@ int main()
 	int TypeOfCrossing = 0;
 	int turnTo = 0;
 	initRobot();
+	serial_set_baud_rate(115200);
 	
 	while(!button_is_pressed(BUTTON_B))
 	{
