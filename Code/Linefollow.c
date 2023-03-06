@@ -53,55 +53,54 @@ void initRobot()
 	set_motors(0,0);
 }
 
+void checkReachedTurn()
+{
+	unsigned int sensors[5];
+	while(1)
+	{
+		read_line(sensors, IR_EMITTERS_ON);
+		if(sensors[2] >= 750)
+		{
+			clear();
+			print("T Stop");
+			break;
+		}
+	}
+}
 void turn(int turnTo)
 {
 	unsigned int sensors[5];
 	clear();
 	
-	read_line(sensors, IR_EMITTERS_ON);
-	int beenWhite = 0;
-	switch(turnTo)
+	if(turnTo == 0)
 	{
-		case 0:
-		break;
-		
-		case 1:
-		set_motors(50, -40);
+	}
+	else
+	{
+		if(turnTo < 3)
+		{
+			set_motors(50, -40);
+		}
+		else
+		{
+			set_motors(-40, 50);
+		}
+		delay_ms(100);
+		read_line(sensors, IR_EMITTERS_ON);
 		if(sensors[2] <= 250)
 		{
-			beenWhite = 1;
-			while(beenWhite)
+			checkReachedTurn();
+			if(turnTo == 2)
 			{
-				read_line(sensors, IR_EMITTERS_ON);
-				print("white");
-				if(sensors[2] >= 750)
-				{
-					clear();
-					print("T Stop");
-					beenWhite = 0;
-					set_motors(0,0);
-					break;
-				}
+				delay_ms(150);
+				checkReachedTurn();
+				set_motors(0,0);
+			}
+			else
+			{
+				set_motors(0,0);
 			}
 		}
-		break;
-		case 2:
-		set_motors(-40, 50);
-		if(sensors[2] <= 250)
-		{
-			beenWhite = 1;
-			while(beenWhite)
-			{
-				read_line(sensors, IR_EMITTERS_ON);
-				if(sensors[2] >= 750)
-				{
-					beenWhite = 0;
-					set_motors(0,0);
-					break;
-				}
-			}
-		}
-		break;
 	}
 }
 
@@ -253,7 +252,8 @@ int main()
 	
 	while(1)
 	{
-		followLine(&typeOfCrossing, &turnTo);
+		//followLine(&typeOfCrossing, &turnTo);
+		turn(turnTo);
 		set_motors(0,0);
 		wait_for_button_press(BUTTON_B);
 		wait_for_button_release(BUTTON_B);
