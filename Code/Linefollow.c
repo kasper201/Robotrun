@@ -57,14 +57,25 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 {
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
+	int integral = 0;
+	int last_proportional = 0;
 	
 	while(noCrossing)
 	{
 		int delaycheck = 100;
 		clear();
-		read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		int leftSpeed = 110-(sensors[1]/10);
-		int rightSpeed = 110-(sensors[3]/10);
+		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
+		
+		// The "proportional" term should be 0 when we are on the line.
+		int proportional = ((int)position) - 2000;
+		
+		// Compute the derivative (change) and integral (sum) of the
+		// position.
+		int derivative = proportional - last_proportional;
+		integral += proportional;
+		
+		// Remember the last position.
+		last_proportional = proportional;
 		
 		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
 		{
@@ -79,11 +90,11 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
+		else if(sensors[1] >= 750 && sensors[2] >= 750 && sensors[3] <= 250 ) //checks if T-split on its side to the left
 		{
 			*TypeOfCrossing = 2;//T-left
 			delay_ms(delaycheck);
-			if(sensors[0] >= 500 || sensors[2] >= 500)
+			if(sensors[0] >= 750)
 			{
 				continue;
 			}
@@ -93,10 +104,10 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[1] <= 750 && sensors[3] <= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
+		else if(sensors[3] >= 750 && sensors[2] >= 750 && sensors[1] <= 250) //checks if T-split on its side to the right
 		{
 			*TypeOfCrossing = 3;//T-right
-			if(sensors[4] >= 500 || sensors[2] >= 500)
+			if(sensors[4] >= 750)
 			{
 				continue;
 			}
@@ -109,7 +120,7 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing
 		{
 			*TypeOfCrossing = 4;//Cross
-			if(sensors[1] >= 800 && sensors[3] >= 800)
+			if(sensors[1] >= 900 && sensors[3] >= 900)
 			{
 				continue;
 			}
@@ -132,16 +143,24 @@ void followLine(int *TypeOfCrossing, int TurnTo) //0 if no crossing otherwise 1 
 			*TypeOfCrossing = 0; //no Crossing
 		}
 		
-		/*if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250){ // Check if the left most bottom sensor is the only big turn sensor above line
-			leftSpeed = -60;
-			rightSpeed = 60;
-		}
-		else if(sensors[0] <= 250 && sensors[2] <= 250 && sensors[4] >= 750){ //Check if the right most bottom sensor is the only big turn sensor above line
-			rightSpeed = -60;
-			leftSpeed = 60;
-		}*/
+		// m1 - m2.  If this is a positive number the robot will turn
+		// to the right.  If it is a negative number, the robot will
+		// turn to the left, and the magnitude of the number determines
+		// the sharpness of the turn.
+		int power_difference = proportional/20 + integral/10000 + derivative*3/2;
 		
-		set_motors(leftSpeed, rightSpeed);
+		// Compute the actual motor settings.  We never set either motor
+		// to a negative value.
+		const int max = 60;
+		if(power_difference > max)
+		power_difference = max;
+		if(power_difference < -max)
+		power_difference = -max;
+		
+		if(power_difference < 0)
+		set_motors(1.5*(max+power_difference), 1.5*max);
+		else
+		set_motors(1.5*max, 1.5*(max-power_difference));
 	}
 }
 // This is the main function and will be left out when done
@@ -170,10 +189,12 @@ int main()
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
 	delay(3300);
 	
-	followLine(&TypeOfCrossing, turnTo);
-	
-	while(1){
+	while(1)
+	{
+		followLine(&TypeOfCrossing, turnTo);
 		set_motors(0,0);
+		wait_for_button_press(BUTTON_B);
+		wait_for_button_release(BUTTON_B);
 	}
 	
 }
