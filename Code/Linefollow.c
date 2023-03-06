@@ -12,6 +12,28 @@ const char startup_line2[] PROGMEM = "KARBONKE";
 const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
+void startDrivingAfter()
+{
+	while(!button_is_pressed(BUTTON_B))
+	{
+		print("Press B");
+		lcd_goto_xy(0,1);
+		print("to start");
+	}
+	while(button_is_pressed(BUTTON_B)){
+		clear();
+		print("Let go");
+		lcd_goto_xy(0,1);
+		print("to start");
+		delay_ms(1000);
+	}
+	
+	clear();
+	print("GO!!");
+	play("L4 MSD.D.D R8 ! O5 G2. R8" );
+	delay(3200);
+}
+
 void initRobot()
 {
 	pololu_3pi_init(2000);
@@ -67,6 +89,7 @@ void checkReachedTurn()
 		}
 	}
 }
+
 void turn(int turnTo)
 {
 	unsigned int sensors[5];
@@ -120,7 +143,7 @@ void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off o
 	else
 	{
 		*typeOfCrossing = 0;
-	}	
+	}
 	
 	while(noCrossing)
 	{
@@ -185,7 +208,7 @@ void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off o
 				continue;
 			}
 			else
-			{	
+			{
 				print("Cross");
 				noCrossing = 0;//exits loop
 			}
@@ -201,6 +224,7 @@ void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off o
 		else
 		{
 			*typeOfCrossing = 0; //no Crossing
+			noCrossing = 1;
 		}
 		
 		// m1 - m2.  If this is a positive number the robot will turn
@@ -231,24 +255,7 @@ int main()
 	initRobot();
 	serial_set_baud_rate(115200);
 	
-	while(!button_is_pressed(BUTTON_B))
-	{
-		print("Press B");
-		lcd_goto_xy(0,1);
-		print("to start");
-	}
-	while(button_is_pressed(BUTTON_B)){
-		clear();
-		print("Let go");
-		lcd_goto_xy(0,1);
-		print("to start");
-		delay_ms(1000);
-	}
-	
-	clear();
-	print("GO!!");
-	play("L4 MSD.D.D R8 ! O5 G2. R8" );
-	delay(3200);
+	startDrivingAfter();
 	
 	while(1)
 	{
