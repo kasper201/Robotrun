@@ -108,7 +108,7 @@ void turn(int turnTo)
 		{
 			set_motors(-40, 50);
 		}
-		delay_ms(100);
+		delay_ms(150);
 		read_line(sensors, IR_EMITTERS_ON);
 		if(sensors[2] <= 250)
 		{
@@ -127,23 +127,12 @@ void turn(int turnTo)
 	}
 }
 
-void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off of line
+void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of line
 {
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
 	int integral = 0;
 	int last_proportional = 0;
-	
-	if(*typeOfCrossing != 0)
-	{
-		turn(*turnTo);
-		*typeOfCrossing = 0;
-		*turnTo = 0;
-	}
-	else
-	{
-		*typeOfCrossing = 0;
-	}
 	
 	while(noCrossing)
 	{
@@ -187,7 +176,7 @@ void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off o
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[3] >= 750 && sensors[2] >= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
+		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
 		{
 			*typeOfCrossing = 3;//T-right
 			if(sensors[3] >= 750 || sensors[2] <= 250)
@@ -212,6 +201,22 @@ void followLine(int *typeOfCrossing, int *turnTo) //0 if no crossing 99 if off o
 				print("Cross");
 				noCrossing = 0;//exits loop
 			}
+		}
+		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 1) //check if at corner to left
+		{
+			*typeOfCrossing = 5; //corner to left
+			print("corner");
+			lcd_goto_xy(0,1);
+			print(" left");
+			noCrossing = 0;
+		}
+		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 1) //check if at corner to right
+		{
+			*typeOfCrossing = 6; //corner to right
+			print("corner");
+			lcd_goto_xy(0,1);
+			print("right");
+			noCrossing = 0;
 		}
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
@@ -252,6 +257,7 @@ int main()
 {
 	int typeOfCrossing = 0;
 	int turnTo = 2;
+	int inMaze = 1;
 	initRobot();
 	serial_set_baud_rate(115200);
 	
@@ -259,8 +265,8 @@ int main()
 	
 	while(1)
 	{
-		//followLine(&typeOfCrossing, &turnTo);
-		turn(turnTo);
+		followLine(&typeOfCrossing, inMaze);
+		//turn(turnTo);
 		set_motors(0,0);
 		wait_for_button_press(BUTTON_B);
 		wait_for_button_release(BUTTON_B);
