@@ -5,6 +5,7 @@ Further more the code will output the thickness of the line and maybe sensors 6 
 
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
+#include "FindLine.h"
 
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
@@ -253,23 +254,22 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	}
 }
 // This is the main function and will be left out when done
-int main()
+/*int main()
 {
 	int typeOfCrossing = 0;
 	int turnTo = 2;
 	int inMaze = 1;
 	initRobot();
-	serial_set_baud_rate(115200);
 	
 	startDrivingAfter();
 	
 	while(1)
 	{
 		followLine(&typeOfCrossing, inMaze);
-		//turn(turnTo);
+		turn(turnTo);
 		set_motors(0,0);
 		wait_for_button_press(BUTTON_B);
 		wait_for_button_release(BUTTON_B);
 	}
 	
-}
+}*/
