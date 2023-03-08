@@ -140,6 +140,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
+		//up to and including line 153 is from the PID from pololu from page: https://www.pololu.com/docs/0J21/7.c
 		// The "proportional" term should be 0 when we are on the line.
 		int proportional = ((int)position) - 2000;
 		
@@ -233,6 +234,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			noCrossing = 1;
 		}
 		
+		//up to and including line 255 is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
 		// m1 - m2.  If this is a positive number the robot will turn
 		// to the right.  If it is a negative number, the robot will
 		// turn to the left, and the magnitude of the number determines
@@ -243,14 +245,14 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		// to a negative value.
 		const int max = 60;
 		if(power_difference > max)
-		power_difference = max;
+			power_difference = max;
 		if(power_difference < -max)
-		power_difference = -max;
+			power_difference = -max;
 		
 		if(power_difference < 0)
-		set_motors(1.5*(max+power_difference), 1.5*max);
+			set_motors(1.5*(max+power_difference), 1.5*max);
 		else
-		set_motors(1.5*max, 1.5*(max-power_difference));
+			set_motors(1.5*max, 1.5*(max-power_difference));
 	}
 }
 // This is the main function and will be left out when done
