@@ -3,7 +3,7 @@
 
 void initRobot();
 void startDrivingAfter();
-void followLine(&typeOfCrossing, inMaze);
-void turn(turnTo);
+void followLine(int *typeOfCrossing, int inMaze);
+void turn(int turnTo);
 
 #endif // FINDLINE
