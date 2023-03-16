@@ -204,7 +204,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 1) //check if at corner to left
+		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 0) //check if at corner to left
 		{
 			*typeOfCrossing = 5; //corner to left
 			print("corner");
@@ -212,7 +212,11 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			print(" left");
 			noCrossing = 0;
 		}
-		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 1) //check if at corner to right
+		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 1) //check if at corner to left and take it if in maze
+		{
+			turn(3);
+		}
+		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 0) //check if at corner to right
 		{
 			*typeOfCrossing = 6; //corner to right
 			print("corner");
@@ -220,6 +224,10 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			print("right");
 			noCrossing = 0;
 		}
+		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 0) //check if at corner to right and take it if in maze
+		{
+			turn(1);
+		)
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
 			*typeOfCrossing = 99;//not on any line
