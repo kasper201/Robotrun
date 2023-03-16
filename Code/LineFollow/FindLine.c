@@ -1,4 +1,6 @@
 /*
+All code with is original except for the PID control. The PID control is from Pololu themselves and can be found at: https://www.pololu.com/docs/0J21/7.c
+
 The code will output if the left sensor found a line and if the right sensor has found a line, this will most likely be done using pointers making them necessary for the input aswell.
 Further more the code will output the thickness of the line and maybe sensors 6 and 7 for object detection
 */
