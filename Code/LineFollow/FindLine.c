@@ -231,7 +231,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
 			*typeOfCrossing = 99;//not on any line
-			print("off of");
+			print("of the");
 			lcd_goto_xy(0,1);
 			print("line");
 			noCrossing = 0;//exits loop
