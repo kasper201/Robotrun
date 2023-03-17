@@ -39,24 +39,35 @@ int main()
 			break;
 			
 			case stockroom:
-			followLine(&crossing, inMaze);
-			stockroomStart();
-			if(mazeBorder == true) //voorbeeldje van hoe je de cstate dalijk zou moeten hebben ongeveer
-			{
-				cSTATE = maze;	
-			}
-			if(chargeBorder == true)
-			{
-				cSTATE = charge;
-			}
 			if(manualOverWrite == true)
 			{
-			cSTATE = manual;
+				cSTATE = manual;
 			}
+			
 			if(floefsLost == true)
 			{
-			cSTATE = lost;
+				cSTATE = lost;
 			}
+			
+			if(battery == 0)
+			{
+				passingToCharge();
+				if(chargeBorder == true)
+				{
+					cSTATE = charge;
+				}
+			}
+			else
+			{
+				followLine(&crossing, inMaze);
+				stockroomStart();
+				findPackage();
+				if(mazeBorder == true)
+				{
+					cSTATE = maze;	
+				}	
+			}
+			
 			break;
 			
 			case charge:
