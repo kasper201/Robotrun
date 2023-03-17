@@ -270,11 +270,30 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			set_motors(1.5*max, 1.5*(max-power_difference));
 	}
 }
-// This is the main function and will be left out when done
-/*int main()
+
+void whatButton(int *button)
+{
+	wait_on_button_press(ANY_BUTTON);
+	if(button_is_pressed(BUTTON_A))
+	{
+		*button = 3;
+	}
+	else if(button_is_pressed(BUTTON_B)
+	{
+		*button = 0;
+	}
+	else if(button_is_pressed(BUTTON_C)
+	{
+		*button = 1;
+	}
+	else if(button_is_pressed(BUTTON_A) && button_is_pressed(BUTTON_C))
+	{
+		*button = 2;
+	}
+int main()
 {
 	int typeOfCrossing = 0;
-	int turnTo = 2;
+	int turnTo[] = {1,3,2,1,0,3,2,2};
 	int inMaze = 1;
 	initRobot();
 	
@@ -282,11 +301,30 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(1)
 	{
-		followLine(&typeOfCrossing, inMaze);
-		turn(turnTo);
-		set_motors(0,0);
-		wait_for_button_press(BUTTON_B);
-		wait_for_button_release(BUTTON_B);
+		if(button_is_pressed(BUTTON_A))
+		{
+			while(1)
+			{
+				followLine(&typeOfCrossing, inMaze);
+				wait_on_button_press(BUTTON_B);
+			}
+		}
+		else if(button_is_pressed(BUTTON_B))
+		{
+			int whatDirection = 0;
+			whatButton(&whatDirection);
+			turn(whatDirection);
+			
+		else if(button_is_pressed(BUTTON_C))
+		{
+			for(int i = 0; i < 8; i++)
+			{
+				followLine(&typeOfCrossing, inMaze);
+				turn(turnTo[i]);
+				typeOfCrossing = 0;
+			}
+			set_motors(0,0);
+		}
 	}
 	
-}*/
+}
