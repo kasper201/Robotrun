@@ -39,7 +39,7 @@ int main()
 			
 			case stockroom:
 			
-			if(mazeBorder == true)
+			if(mazeBorder == true) //voorbeeldje van hoe je de cstate dalijk zou moeten hebben ongeveer
 			{
 				cSTATE = maze;	
 			}
