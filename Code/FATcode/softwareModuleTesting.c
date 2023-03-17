@@ -234,60 +234,65 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		{
 			turn(1);
 		}
-			else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
-			{
-				*typeOfCrossing = 99;//not on any line
-				print("of the");
-				lcd_goto_xy(0,1);
-				print("line");
-				noCrossing = 0;//exits loop
-			}
-			else
-			{
-				*typeOfCrossing = 0; //no Crossing
-				noCrossing = 1;
-			}
-			
-			//up to and including line 255 is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
-			// m1 - m2.  If this is a positive number the robot will turn
-			// to the right.  If it is a negative number, the robot will
-			// turn to the left, and the magnitude of the number determines
-			// the sharpness of the turn.
-			int power_difference = proportional/20 + integral/10000 + derivative*3/2;
-			
-			// Compute the actual motor settings.  We never set either motor
-			// to a negative value.
-			const int max = 60;
-			if(power_difference > max)
-			power_difference = max;
-			if(power_difference < -max)
-			power_difference = -max;
-			
-			if(power_difference < 0)
-			set_motors(1.5*(max+power_difference), 1.5*max);
-			else
-			set_motors(1.5*max, 1.5*(max-power_difference));
+		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
+		{
+			*typeOfCrossing = 99;//not on any line
+			print("of the");
+			lcd_goto_xy(0,1);
+			print("line");
+			noCrossing = 0;//exits loop
 		}
+		else
+		{
+			*typeOfCrossing = 0; //no Crossing
+			noCrossing = 1;
+		}
+		
+		//up to and including line 255 is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
+		// m1 - m2.  If this is a positive number the robot will turn
+		// to the right.  If it is a negative number, the robot will
+		// turn to the left, and the magnitude of the number determines
+		// the sharpness of the turn.
+		int power_difference = proportional/20 + integral/10000 + derivative*3/2;
+		
+		// Compute the actual motor settings.  We never set either motor
+		// to a negative value.
+		const int max = 60;
+		if(power_difference > max)
+		power_difference = max;
+		if(power_difference < -max)
+		power_difference = -max;
+		
+		if(power_difference < 0)
+		set_motors(1.5*(max+power_difference), 1.5*max);
+		else
+		set_motors(1.5*max, 1.5*(max-power_difference));
 	}
+}
 
 void whatButton(int *button)
 {
 	clear();
 	wait_for_button_press(ANY_BUTTON);
-	if(button_is_pressed(BUTTON_A))
+	delay_ms(50);
+	if(button_is_pressed(BUTTON_A) && !button_is_pressed(BUTTON_C))
 	{
+		wait_for_button_release(BUTTON_A);
 		*button = 3;
 	}
 	else if(button_is_pressed(BUTTON_B))
 	{
+		wait_for_button_release(BUTTON_B);
 		*button = 0;
 	}
-	else if(button_is_pressed(BUTTON_C))
+	else if(button_is_pressed(BUTTON_C) && !button_is_pressed(BUTTON_A))
 	{
+		wait_for_button_release(BUTTON_C);
 		*button = 1;
 	}
 	else if(button_is_pressed(BUTTON_A) && button_is_pressed(BUTTON_C))
 	{
+		wait_for_button_release(BUTTON_A);
 		*button = 2;
 	}
 }
@@ -299,7 +304,7 @@ int main()
 	initRobot();
 	
 	startDrivingAfter();
-			
+	
 	while(1)
 	{
 		if(button_is_pressed(BUTTON_A))
@@ -314,9 +319,14 @@ int main()
 		}
 		else if(button_is_pressed(BUTTON_B))
 		{
-			int whatDirection = 0;
-			whatButton(&whatDirection);
-			turn(whatDirection);
+			while(1)
+			{
+				wait_for_button_release(BUTTON_B);
+				int whatDirection = 0;
+				whatButton(&whatDirection);
+				turn(whatDirection);
+				delay_ms(1000);
+			}
 		}
 		else if(button_is_pressed(BUTTON_C))
 		{
@@ -328,5 +338,5 @@ int main()
 			}
 			set_motors(0,0);
 		}
-	}		
+	}
 }
