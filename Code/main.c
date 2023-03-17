@@ -15,7 +15,6 @@
 int main()
 {
 	int crossing = 0;
-	int inMaze = 0;
 	enum STATE{init, maze, stockroom, charge, manual, home, lost};
 	enum STATE cSTATE = init;
 	while(1 /*ERROR == noERROR*/) //ERROR moet nog geschreven worden
@@ -31,6 +30,8 @@ int main()
 			break;
 			
 			case maze:
+			int inMaze = 1;
+			int inMaze = 0;
 			cSTATE = stockroom
 			cSTATE = home;
 			cSTATE = manual;
@@ -38,7 +39,8 @@ int main()
 			break;
 			
 			case stockroom:
-			
+			followLine(&crossing, inMaze);
+			stockroomStart();
 			if(mazeBorder == true) //voorbeeldje van hoe je de cstate dalijk zou moeten hebben ongeveer
 			{
 				cSTATE = maze;	
