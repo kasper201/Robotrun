@@ -38,10 +38,23 @@ int main()
 			break;
 			
 			case stockroom:
-			cSTATE = maze;
-			cSTATE = charge;
+			
+			if(mazeBorder == true)
+			{
+				cSTATE = maze;	
+			}
+			if(chargeBorder == true)
+			{
+				cSTATE = charge;
+			}
+			if(manualOverWrite == true)
+			{
 			cSTATE = manual;
+			}
+			if(floefsLost == true)
+			{
 			cSTATE = lost;
+			}
 			break;
 			
 			case charge:
