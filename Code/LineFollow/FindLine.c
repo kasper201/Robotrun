@@ -100,6 +100,11 @@ void turn(int turnTo)
 	
 	if(turnTo == 0)
 	{
+		set_motors(50, 50);
+		clear();
+		print("ahead");
+		delay_ms(100);
+		set_motors(0,0);
 	}
 	else
 	{
