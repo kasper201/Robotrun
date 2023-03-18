@@ -40,13 +40,14 @@ void routeKnown(int stockStart, int sizeArray, int turnArray[], int **state)
 	}
 }
 
-void solveMaze(int stockStart, int irouteKnown, int sizeArray, int (*turnArray)[sizeArray], int *state) //set when implementing the code the state to Stockroom((5,0, facing -x) do this together with Mik
+void solveMaze(int stockStart, int *irouteKnown, int sizeArray, int (*turnArray)[sizeArray], int *state) //set when implementing the code the state to Stockroom((5,0, facing -x) do this together with Mik
 {
 	int crossing;
 	int inMaze = 1;
 	int foundEnd = 0;
-	int whatforcrossing[64];
-	if(irouteKnown == 1)//if route known just drive like the old array
+	int whatkindofcrossing[64];
+	int deadEndsFound = 0;
+	if(*irouteKnown == 1)//if route known just drive like the old array
 	{
 		routeKnown(stockStart, sizeArray, *turnArray, &state);
 	}
@@ -58,7 +59,7 @@ void solveMaze(int stockStart, int irouteKnown, int sizeArray, int (*turnArray)[
 		{
 			crossing = 0;
 			followLine(&crossing, inMaze);//drive till crossing or dead end found
-			whatforcrossing[i] = crossing; //save what type of crossing
+			whatkindofcrossing[i] = crossing; //save what type of crossing
 			if(crossing == 2) // if able to go left and straight go straight
 			{
 				turn(0);
@@ -69,18 +70,30 @@ void solveMaze(int stockStart, int irouteKnown, int sizeArray, int (*turnArray)[
 				turn(2);
 				if(turnValue == 0) // if straight was wrong go left
 				{
-					turnValue == 3;
+					turnValue = 3;
 				}
 				else if(turnValue == 1) // if right was wrong go straight
 				{
-					turnValue == 0;
+					turnValue = 0;
 				}
 				else
 				{
 					i--;
-					if(*turnArray[i-1] == 1) // if last turn was to go to right thats wrong so go straight
+					if((*turnArray[i-1] == 1) && whatkindofcrossing[i-1] != 1) // if last turn was to go to right thats wrong so go straight unless unable to go straight (seen from if its a new route)
 					{
 						turnValue = 0;
+					}
+					else if((*turnArray[i-1] == 1) && whatkindofcrossing[i-1] == 1)
+					{
+						turnValue = 3;
+					}
+					else if((*turnArray[i-1] == 0) && whatkindofcrossing[i-1] != 2) // if last turn was to go straight go left unless unable to go left (seen from if you restart the route
+					{
+						turnValue = 3;
+					}
+					else 
+					{
+						// won't work.... I probably could make it work indefinetely but that would require some more clever thinking
 					}
 				}
 				i--;
@@ -90,9 +103,17 @@ void solveMaze(int stockStart, int irouteKnown, int sizeArray, int (*turnArray)[
 			{
 				turn(1);
 				*turnArray[i] = turnValue; //save turn value. this value changes based on if its been at a dead end
-				//turnValue = 1;
 			}
 			i++;
+			deadEndsFound++;
+		}
+		if(deadEndsFound > 0)
+		{
+			*irouteKnown = 0;
+		}
+		else
+		{
+			*irouteKnown = 1;
 		}
 	}
 }
@@ -102,8 +123,9 @@ int main()
 	int array[] = {1,3,1,2,2};//will become empty in actual code, this is just for testing purposes
 	int sizeArray = sizeof(array)/sizeof(int);
 	int state = 0;
+	int irouteKnown = 0;
 	while(1)
 	{
-		solveMaze(0, 1, sizeArray, &array, &state);
+		solveMaze(0, &irouteKnown, sizeArray, &array, &state);
 	}
 }
