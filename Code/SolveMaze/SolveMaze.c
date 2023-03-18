@@ -11,11 +11,11 @@
 #include <pololu/3pi.h>
 #include "FindLine.h"
 
-void routeKnown(int stockStart, int sizeArray, int turnArray[], int **state)
+void routeKnown(int sizeArray, int turnArray[], int **state)
 {
 	int inMaze = 1;
 	int resetCrossing = 0;
-	if(stockStart == 0)//if stockStart == 0 robot will go from start to stockroom otherwise if stockStart == 1 the robot will go from stockroom to start
+	if(*(*(state)) == 0)//if stockStart == 0 robot will go from start to stockroom otherwise if stockStart == 1 the robot will go from stockroom to start
 	{
 		for(int i = 0; i <= sizeArray; i++)
 		{
@@ -40,7 +40,7 @@ void routeKnown(int stockStart, int sizeArray, int turnArray[], int **state)
 	}
 }
 
-void solveMaze(int stockStart, int *irouteKnown, int sizeArray, int (*turnArray)[sizeArray], int *state) //set when implementing the code the state to Stockroom((5,0, facing -x) do this together with Mik
+void solveMaze(int *irouteKnown, int sizeArray, int (*turnArray)[sizeArray], int *state) //set when implementing the code the state to Stockroom((5,0, facing -x) do this together with Mik
 {
 	int crossing;
 	int inMaze = 1;
@@ -49,7 +49,7 @@ void solveMaze(int stockStart, int *irouteKnown, int sizeArray, int (*turnArray)
 	int deadEndsFound = 0;
 	if(*irouteKnown == 1)//if route known just drive like the old array
 	{
-		routeKnown(stockStart, sizeArray, *turnArray, &state);
+		routeKnown(sizeArray, *turnArray, &state);
 	}
 	else
 	{
@@ -60,7 +60,11 @@ void solveMaze(int stockStart, int *irouteKnown, int sizeArray, int (*turnArray)
 			crossing = 0;
 			followLine(&crossing, inMaze);//drive till crossing or dead end found
 			whatkindofcrossing[i] = crossing; //save what type of crossing
-			if(crossing == 2) // if able to go left and straight go straight
+			if(crossing == 7)
+			{
+				foundEnd = 1;
+			}
+			else if(crossing == 2) // if able to go left and straight go straight
 			{
 				turn(0);
 				*turnArray[i] = 0;
@@ -115,17 +119,20 @@ void solveMaze(int stockStart, int *irouteKnown, int sizeArray, int (*turnArray)
 		{
 			*irouteKnown = 1;
 		}
+		*state = 1;
 	}
 }
 
 int main()
 { 
+	initRobot();
+	
 	int array[] = {1,3,1,2,2};//will become empty in actual code, this is just for testing purposes
 	int sizeArray = sizeof(array)/sizeof(int);
 	int state = 0;
 	int irouteKnown = 0;
 	while(1)
 	{
-		solveMaze(0, &irouteKnown, sizeArray, &array, &state);
+		solveMaze(&irouteKnown, sizeArray, &array, &state);
 	}
 }
