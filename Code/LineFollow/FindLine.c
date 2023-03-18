@@ -234,7 +234,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 0) //check if at corner to right and take it if in maze
 		{
 			turn(1);
-		)
+		}
 		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] <= 50 && sensors[3] <= 50 && sensors[4] <= 50)//off the planeto
 		{
 			*typeOfCrossing = 99;//not on any line
@@ -250,10 +250,6 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		}
 		
 		//up to and including line 255 is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
-		// m1 - m2.  If this is a positive number the robot will turn
-		// to the right.  If it is a negative number, the robot will
-		// turn to the left, and the magnitude of the number determines
-		// the sharpness of the turn.
 		int power_difference = proportional/20 + integral/10000 + derivative*3/2;
 		
 		// Compute the actual motor settings.  We never set either motor
