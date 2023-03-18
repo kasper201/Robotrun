@@ -135,29 +135,48 @@ void turn(int turnTo)
 	}
 }
 
+void drive(int position)
+{	
+	int integral = 0;
+	int last_proportional = 0;
+
+	//this entire function is from the pololu site since we haven't learned enough about PID control nor do we have enough information to make proper PID control with this robot like what pololu is able to do. This code is gotten from: https://www.pololu.com/docs/0J21/7.c
+	// The "proportional" term should be 0 when we are on the line.
+	int proportional = ((int)position) - 2000;
+	
+	// Compute the derivative (change) and integral (sum) of the
+	// position.
+	int derivative = proportional - last_proportional;
+	integral += proportional;
+	
+	// Remember the last position.
+	last_proportional = proportional;
+	
+	int power_difference = proportional/20 + integral/10000 + derivative*3/2;
+	
+	// Compute the actual motor settings.  We never set either motor
+	// to a negative value.
+	const int max = 60;
+	if(power_difference > max)
+	power_difference = max;
+	if(power_difference < -max)
+	power_difference = -max;
+	
+	if(power_difference < 0)
+	set_motors(1.5*(max+power_difference), 1.5*max);
+	else
+	set_motors(1.5*max, 1.5*(max-power_difference));
+}
+
 void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of line
 {
 	unsigned int sensors[5];
 	unsigned char noCrossing = 1;
-	int integral = 0;
-	int last_proportional = 0;
 	
 	while(noCrossing)
 	{
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
-		
-		//up to and including line 153 is from the PID from pololu from page: https://www.pololu.com/docs/0J21/7.c
-		// The "proportional" term should be 0 when we are on the line.
-		int proportional = ((int)position) - 2000;
-		
-		// Compute the derivative (change) and integral (sum) of the
-		// position.
-		int derivative = proportional - last_proportional;
-		integral += proportional;
-		
-		// Remember the last position.
-		last_proportional = proportional;
 		
 		if(sensors[0] >= 750 && sensors[4] >= 750 && sensors[1] <= 250 && sensors[3] <= 250) //checks if T-split normal
 		{
@@ -243,27 +262,20 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			print("line");
 			noCrossing = 0;//exits loop
 		}
+		else if(sensors[0] <= 50 && sensors[1] <= 50 && sensors[2] >= 900 && sensors[3] <= 50 && sensors[4] <= 50)
+		{
+			*typeOfCrossing = 7; // found end of maze
+			print("end of");
+			lcd_goto_xy(0,1);
+			print("maze");
+			
+		}
 		else
 		{
 			*typeOfCrossing = 0; //no Crossing
 			noCrossing = 1;
 		}
-		
-		//up to and including line 255 is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
-		int power_difference = proportional/20 + integral/10000 + derivative*3/2;
-		
-		// Compute the actual motor settings.  We never set either motor
-		// to a negative value.
-		const int max = 60;
-		if(power_difference > max)
-			power_difference = max;
-		if(power_difference < -max)
-			power_difference = -max;
-		
-		if(power_difference < 0)
-			set_motors(1.5*(max+power_difference), 1.5*max);
-		else
-			set_motors(1.5*max, 1.5*(max-power_difference));
+		drive(position);		
 	}
 }
 // This is the main function and will be left out when done
