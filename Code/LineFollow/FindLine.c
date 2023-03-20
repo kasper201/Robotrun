@@ -111,17 +111,17 @@ void turn(int turnTo)
 		}
 		else
 		{
-			if(turnTo == 0)
+			if(turnTo == 2)
 			{
 				set_motors(50,-50);
 			}
 			else if(turnTo == 1)
 			{
-				set_motors(50, -40);
+				set_motors(50, -50);
 			}
 			else
 			{
-				set_motors(-40, 50);
+				set_motors(-50, 50);
 			}
 			delay_ms(150);
 			read_line(sensors, IR_EMITTERS_ON);
@@ -281,6 +281,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		else
 			set_motors(1.5*max, 1.5*(max-power_difference));
 	}
+	delay_ms(50);
 }
 // This is the main function and will be left out when done
 /*int main()
