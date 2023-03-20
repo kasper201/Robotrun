@@ -281,7 +281,6 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		else
 			set_motors(1.5*max, 1.5*(max-power_difference));
 	}
-	delay_ms(50);
 }
 // This is the main function and will be left out when done
 /*int main()
