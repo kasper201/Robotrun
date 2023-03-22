@@ -139,6 +139,10 @@ void turn(int turnTo)
 					set_motors(0,0);
 				}
 			}
+			else
+			{
+				set_motors(0,0);
+			}
 		}
 		notDone = 1;
 	}
