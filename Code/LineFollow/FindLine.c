@@ -178,6 +178,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			*typeOfCrossing = 1;//T-normal
 			if(sensors[2] >= 750 )
 			{
+				set_motors(75,75);
 				continue;
 			}
 			else
@@ -191,6 +192,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			*typeOfCrossing = 2;//T-left
 			if(sensors[1] >= 750 || sensors[2] <= 250 )
 			{
+				set_motors(75,75);
 				continue;
 			}
 			else
@@ -204,6 +206,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			*typeOfCrossing = 3;//T-right
 			if(sensors[3] >= 750 || sensors[2] <= 250)
 			{
+				set_motors(75,75);
 				continue;
 			}
 			else
@@ -217,6 +220,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			*typeOfCrossing = 4;//Cross
 			if(sensors[1] >= 900 && sensors[3] >= 900)
 			{
+				set_motors(75,75);
 				continue;
 			}
 			else
@@ -282,9 +286,9 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			power_difference = -max;
 		
 		if(power_difference < 0)
-			set_motors(1.5*(max+power_difference), 1.5*max);
+			set_motors(2*(max+power_difference), 2*max);
 		else
-			set_motors(1.5*max, 1.5*(max-power_difference));
+			set_motors(2*max, 2*(max-power_difference));
 	}
 }
 // This is the main function and will be left out when done
