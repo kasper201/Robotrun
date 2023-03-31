@@ -19,9 +19,20 @@
 int arrayToStockroom[128] = {0};
 int arrayFromStockroom[128] = {0};
 
-void routeKnown()
+void routeKnown(int arrayLength, int ToStockRoom)
 {
-
+	for(int i = 0; i < arrayLength; i++)
+	{
+		followLine(0, 1);
+		if(ToStockRoom)
+		{
+			turn(arrayToStockroom[i]);
+		}
+		else
+		{
+			
+		}
+	}
 }
 
 void simplify(int crossing, int *pathLength)
@@ -75,14 +86,14 @@ void simplify(int crossing, int *pathLength)
 void solveMaze() //set when implementing the code the state to Stockroom((5,0, facing -x) do this together with Mik
 {
 	static int irouteKnown = 0;
+	static int i = 0;
 	
-	if(irouteKnown = 0)
+	if(irouteKnown == 1)
 	{
-		routeKnown();
+		routeKnown(i, 1);
 	}
 	else
 	{
-		int i = 0;
 		while(1)
 		{
 			int crossing = 0;
@@ -91,7 +102,7 @@ void solveMaze() //set when implementing the code the state to Stockroom((5,0, f
 			if(crossing == 7)
 			{
 				set_motors(75,75);
-				delay_ms(100);
+				delay_ms(150);
 				break;
 			}
 			else if(crossing == 2)
@@ -102,7 +113,9 @@ void solveMaze() //set when implementing the code the state to Stockroom((5,0, f
 			}
 			else if(crossing == 99)
 			{
-				turn(2);
+				set_motors(0,0);
+				turn(3);
+				delay_ms(20);
 				arrayToStockroom[i] = 2;
 			}
 			else
@@ -113,6 +126,7 @@ void solveMaze() //set when implementing the code the state to Stockroom((5,0, f
 			i++;
 			simplify(crossing, &i);
 		}
+		irouteKnown = 1;
 	}
 }
 
@@ -121,10 +135,7 @@ int main()
 	initRobot();
 	while(1)
 	{
-		turn(1);
-	}
-	while(1)
-	{
 		solveMaze();
+		wait_for_button_press(BUTTON_B);
 	}
 }
