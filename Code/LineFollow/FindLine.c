@@ -98,7 +98,7 @@ void turn(int turnTo)
 	unsigned int sensors[5];
 	clear();
 	
-	int notDone = 0;
+	int notDone = 1;
 	while(notDone)
 	{
 		if(turnTo == 0)
@@ -113,15 +113,16 @@ void turn(int turnTo)
 		{
 			if(turnTo == 2)
 			{
-				set_motors(50,-50);
+				set_motors(75,-75);
 			}
 			else if(turnTo == 1)
 			{
-				set_motors(50, -50);
+				set_motors(75, -75);
+				print("1");
 			}
 			else
 			{
-				set_motors(-50, 50);
+				set_motors(-75, 75);
 			}
 			delay_ms(150);
 			read_line(sensors, IR_EMITTERS_ON);
@@ -144,7 +145,7 @@ void turn(int turnTo)
 				set_motors(0,0);
 			}
 		}
-		notDone = 1;
+		notDone = 0;
 	}
 }
 
