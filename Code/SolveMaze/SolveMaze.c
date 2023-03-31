@@ -16,8 +16,8 @@
 #include <pololu/3pi.h>
 #include "FindLine.h"
 
-int arrayToStockroom[64];
-int arrayFromStockroom[64];
+int arrayToStockroom[128] = {0};
+int arrayFromStockroom[128] = {0};
 
 void routeKnown()
 {
@@ -29,12 +29,12 @@ void simplify(int crossing, int *pathLength)
 	int turnValue = 0;
 	int i = 0;
 	int totalTurn = 0;
-	if(pathLength < 3 || arrayToStockroom[pathLength-2] != 2)
+	if(*pathLength < 3 || arrayToStockroom[(*pathLength-2)] != 2)
 		return;
 	
 	for(i = 0; i <= 3; i++)
 	{
-		switch(arrayToStockroom[pathLength-i])
+		switch(arrayToStockroom[*pathLength-i])
 		{
 			case 1:
 			totalTurn += 1;
@@ -65,7 +65,7 @@ void simplify(int crossing, int *pathLength)
 		arrayToStockroom[i-3] = 2;
 		break;
 		
-		case 3;
+		case 3:
 		arrayToStockroom[i-3] = 4;
 		break;
 	}
@@ -96,6 +96,7 @@ void solveMaze() //set when implementing the code the state to Stockroom((5,0, f
 			}
 			else if(crossing == 2)
 			{
+				set_motors(0,0);
 				turn(0);
 				arrayToStockroom[i] = 0;
 			}
@@ -118,7 +119,10 @@ void solveMaze() //set when implementing the code the state to Stockroom((5,0, f
 int main()
 { 
 	initRobot();
-	
+	while(1)
+	{
+		turn(1);
+	}
 	while(1)
 	{
 		solveMaze();
