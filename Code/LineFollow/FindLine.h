@@ -7,5 +7,6 @@ void initRobot();
 void startDrivingAfter();
 void followLine(int *typeOfCrossing, int inMaze);
 void turn(int turnTo);
+void followCharge(int *endPointReached);
 
 #endif // FINDLINE
