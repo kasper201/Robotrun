@@ -37,15 +37,17 @@ void fromStockRoom(int arrayLength)
 	}
 }
 
-void routeKnown(int arrayLength, int ToStockRoom)
+void routeKnown(int arrayLength, int *ToStockRoom)
 {	
-	if(ToStockRoom)
+	if(*ToStockRoom)
 	{
 		toStockRoom(arrayLength);
+		*ToStockRoom = 0;
 	}
 	else
 	{
 		fromStockRoom(arrayLength);
+		*ToStockRoom = 1;
 	}
 }
 
@@ -117,13 +119,14 @@ void simplify(int crossing, int *pathLength)
 
 void solveMaze()
 {
+	static int stockroom = 1;
 	int inMaze = 1;
-	static int irouteKnown = 1;
+	static int irouteKnown = 0;
 	static int i = 0;
 	
 	if(irouteKnown == 1)
 	{
-		routeKnown(i, 1);
+		routeKnown(i, &stockroom);
 	}
 	else
 	{
@@ -159,14 +162,13 @@ void solveMaze()
 			simplify(crossing, &i);
 		}
 		irouteKnown = 1;
-		arrayToStockroom[i] = 9;
 	}
 	convertArray(i);
 }
 
 int main()
 { 
-	//int inMaze = 1;
+	int inMaze = 1;
 	initRobot();
 	clear();
 	while(1)
