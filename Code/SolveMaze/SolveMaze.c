@@ -15,6 +15,7 @@
 
 #include <pololu/3pi.h>
 #include "FindLine.h"
+#include "SolveMaze.h"
 
 char arrayToStockroom[128] = {3,3,1,3};
 char arrayFromStockroom[128] = {0};
