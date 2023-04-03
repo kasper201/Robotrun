@@ -274,14 +274,18 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 				noCrossing = 0;//exits loop
 			}
 		}
-		else if(sensors[0] <= 250 && sensors[1] >= 900 && sensors[2] >= 900 && sensors[3] >= 900 && sensors[4] <= 250) // 01110
+		else if(sensors[0] >= 250 && sensors[2] <= 50 && sensors[4] >= 250) // 01110
 		{
 			*typeOfCrossing = 7; // found end of maze
 			print("end of");
 			lcd_goto_xy(0,1);
 			print("maze");
+			set_motors(75,75);
+			delay_ms(250);
 			set_motors(0,0);
 			delay_ms(1000);
+			break;
+			
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] >= 750) //checks if at a cross-crossing 1*1*1
 		{
