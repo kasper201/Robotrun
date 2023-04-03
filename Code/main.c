@@ -14,14 +14,16 @@
 
 int main()
 {
-	int crossing = 0;
+	bool &mazeBorder;
+	bool &chargeBorder;
 	enum STATE{init, maze, stockroom, charge, manual, home, lost};
 	enum STATE cSTATE = init;
+	
 	while(1 /*ERROR == noERROR*/) //ERROR moet nog geschreven worden
 	{
 		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
 		{
-			case init:
+			case init: //init state
 			initRobot();
 			startDrivingAfter();
 			cSTATE = home;
@@ -29,7 +31,7 @@ int main()
 			cSTATE = lost;
 			break;
 			
-			case maze:
+			case maze: //maze state
 			int inMaze = 1;
 			int inMaze = 0;
 			cSTATE = stockroom
@@ -38,63 +40,48 @@ int main()
 			cSTATE = lost;
 			break;
 			
-			case stockroom:
-			if(manualOverWrite == true)
+			case stockroom: //stockroom state
+			if(manualOverWrite == true) //if there is an manual overwrite switch state
 			{
 				cSTATE = manual;
 			}
 			
-			if(floefsLost == true)
+			if(floefsLost == true) //if the robot thinks its lost switch state
 			{
 				cSTATE = lost;
 			}
 			
-			if(battery == 0)
+			if(battery == 0) //if the battery is low drive to the charging station
 			{
 				passingToCharge();
-				if(chargeBorder == true)
-				{
-					cSTATE = charge;
-				}
 			}
-			else
+			else //standard stockroom routine
 			{
-				followLine(&crossing, inMaze);
-				stockroomStart();
-				findPackage();
-				if(mazeBorder == true)
-				{
-					cSTATE = maze;	
-				}	
+				stockroomRoutine();
+				cSTATE = maze;	
 			}
-			
 			break;
 			
-			case charge:
+			case charge: //charge state
 			cSTATE = stockroom
 			cSTATE = manual;
 			cSTATE = lost;
 			break;
 			
-			case manual:
+			case manual: //manual state
 			cSTATE = lost;
 			break;
 			
-			case home:
+			case home: //home state
 			cSTATE = maze;
 			cSTATE = manual;
 			cSTATE = lost;
 			break;
 			
-			case lost:
+			case lost: //lost state
 			cSTATE = manual;
 			break;
 		}	
 	}
 	return 0;
 }
-
-/*
-followLine(&crossing, inMaze);
-		set_motors(0,0);
-		delay(10000);*/
