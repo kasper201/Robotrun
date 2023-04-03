@@ -16,37 +16,51 @@
 #include <pololu/3pi.h>
 #include "FindLine.h"
 
-int arrayToStockroom[128] = {0};
-int arrayFromStockroom[128] = {0};
+char arrayToStockroom[128] = {3,3,1,3};
+char arrayFromStockroom[128] = {0};
 
-void toStockRoom(int arrayLength)
+void toStockRoom()
 {
-	for(int i = 0; i < arrayLength; i++)
+	int i = 0;
+	int check = 0;
+	while(1)
 	{
 		followLine(0,1);
 		turn(arrayToStockroom[i]);
+		if(check == 7)
+		{
+			break;
+		}
+		i++;
 	}
 }
 
-void fromStockRoom(int arrayLength)
+void fromStockRoom()
 {
-	for(int i = 0; i < arrayLength; i++)
+	int i = 0;
+	int check = 0;
+	while(1)
 	{
-		followLine(0,1);
+		followLine(&check,1);
 		turn(arrayFromStockroom[i]);
+		if(check == 7)
+		{
+			break;
+		}
+		i++;
 	}
 }
 
-void routeKnown(int arrayLength, int *ToStockRoom)
+void routeKnown(int *ToStockRoom)
 {	
 	if(*ToStockRoom)
 	{
-		toStockRoom(arrayLength);
+		toStockRoom();
 		*ToStockRoom = 0;
 	}
 	else
 	{
-		fromStockRoom(arrayLength);
+		fromStockRoom();
 		*ToStockRoom = 1;
 	}
 }
@@ -72,46 +86,46 @@ void convertArray(int arrayLength)
 
 void simplify(int crossing, int *pathLength)
 {
-	int i = 0;
-	int totalTurn = 0;
 	if(*pathLength < 3 || arrayToStockroom[(*pathLength-2)] != 2)
 		return;
-	
-	for(i = 0; i <= 3; i++)
+		
+	int i;
+	int totalTurn = 0;
+	for(i = 1; i <= 3; i++)
 	{
 		switch(arrayToStockroom[*pathLength-i])
-		{
+		{			
 			case 1:
-			totalTurn += 1;
-			break;
-			
-			case 2:
-			totalTurn += 2;
+			totalTurn += 90;
 			break;
 			
 			case 3:
-			totalTurn += 3;
+			totalTurn += 270;
+			break;
+			
+			case 2:
+			totalTurn += 180;
 			break;
 		}
 	}
-	totalTurn %= 4;
+	totalTurn %= 360;
 	
 	switch(totalTurn)
 	{
 		case 0:
-		arrayToStockroom[i-3] = 0;
+		arrayToStockroom[*pathLength-3] = 0;
 		break;
 		
-		case 1:
-		arrayToStockroom[i-3] = 1;
+		case 90:
+		arrayToStockroom[*pathLength-3] = 1;
 		break;
 		
-		case 2:
-		arrayToStockroom[i-3] = 2;
+		case 180:
+		arrayToStockroom[*pathLength-3] = 2;
 		break;
 		
-		case 3:
-		arrayToStockroom[i-3] = 4;
+		case 270:
+		arrayToStockroom[*pathLength-3] = 3;
 		break;
 	}
 	*pathLength -= 2;
@@ -126,7 +140,7 @@ void solveMaze()
 	
 	if(irouteKnown == 1)
 	{
-		routeKnown(i, &stockroom);
+		routeKnown(&stockroom);
 	}
 	else
 	{
@@ -136,8 +150,6 @@ void solveMaze()
 			followLine(&crossing, inMaze);
 			if(crossing == 7)
 			{
-				set_motors(75,75);
-				delay_ms(150);
 				break;
 			}
 			else if(crossing == 2)
@@ -160,20 +172,27 @@ void solveMaze()
 			}
 			i++;
 			simplify(crossing, &i);
+			
+			if(i == 11)
+			{
+				irouteKnown = 1;
+				break;
+			}			
 		}
-		irouteKnown = 1;
-	}
-	convertArray(i);
+		convertArray(i);
+	}	
+	irouteKnown = 1;
 }
 
+/*
 int main()
 { 
-	int inMaze = 1;
+	char test;
 	initRobot();
 	clear();
-	while(1)
-	{
-		solveMaze();
-		wait_for_button_press(BUTTON_B);
-	}
-}
+	solveMaze();
+	clear();
+	wait_for_button_press(BUTTON_B);
+	wait_for_button_release(BUTTON_B);
+	solveMaze();
+}*/
