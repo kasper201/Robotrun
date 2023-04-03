@@ -6,5 +6,6 @@ void startDrivingAfter();
 void followLine(int *typeOfCrossing, int inMaze);
 void turn(int turnTo);
 void followCharge(int *endPointReached);
+void spin();
 
 #endif // FINDLINE
