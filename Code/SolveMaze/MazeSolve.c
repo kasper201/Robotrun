@@ -5,7 +5,7 @@
  * -Command reference: http://www.pololu.com/docs/0J18
  *
  * Created: 3/18/2023 11:16:12 AM
- *  Author: Kaspe
+ *  Author: Kasper
  */
 
 /*
@@ -16,9 +16,11 @@
 #include <pololu/3pi.h>
 #include "FindLine.h"
 #include "MazeSolve.h"
+#include "ObstacleDetection.h"
 
 char arrayToStockroom[128] = {3,3,1,3};
 char arrayFromStockroom[128] = {0};
+
 
 void toStockRoom()
 {
@@ -26,6 +28,8 @@ void toStockRoom()
 	int check = 0;
 	while(1)
 	{
+		if(obstacleDetection() != 0)
+		break;
 		followLine(0,1);
 		turn(arrayToStockroom[i]);
 		if(check == 7)
@@ -42,6 +46,8 @@ void fromStockRoom()
 	int check = 0;
 	while(1)
 	{
+		if(obstacleDetection() != 0)
+		break;
 		followLine(&check,1);
 		turn(arrayFromStockroom[i]);
 		if(check == 7)
@@ -134,7 +140,7 @@ void simplify(int crossing, int *pathLength)
 
 void solveMaze()
 {
-	static int stockroom = 1;
+	static int stockroom = 0;
 	int inMaze = 1;
 	static int irouteKnown = 0;
 	static int i = 0;
@@ -147,6 +153,8 @@ void solveMaze()
 	{
 		while(1)
 		{
+			if(obstacleDetection() != 0)
+			break;
 			int crossing = 0;
 			followLine(&crossing, inMaze);
 			if(crossing == 7)
@@ -172,28 +180,9 @@ void solveMaze()
 				arrayToStockroom[i] = 1;
 			}
 			i++;
-			simplify(crossing, &i);
-			
-			if(i == 11)
-			{
-				irouteKnown = 1;
-				break;
-			}			
+			simplify(crossing, &i);		
 		}
 		convertArray(i);
 	}	
 	irouteKnown = 1;
 }
-
-/*
-int main()
-{ 
-	char test;
-	initRobot();
-	clear();
-	solveMaze();
-	clear();
-	wait_for_button_press(BUTTON_B);
-	wait_for_button_release(BUTTON_B);
-	solveMaze();
-}*/
