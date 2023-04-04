@@ -7,6 +7,7 @@ Further more the code will output the thickness of the line and maybe sensors 6 
 
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 #include "FindLine.h"
 
 //the startup screen
@@ -14,6 +15,21 @@ const char startup_line1[] PROGMEM = "RobotRun";
 const char startup_line2[] PROGMEM = "KARBONKE";
 const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
+
+/*
+int detectObstacle()
+{
+	unsigned int sensors[2];
+	read_line_sensors(sensors, QTR_EMITTERS_ON);
+	if(sensors[0] >= 500 || sensors [1] >= 500)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}*/
 
 void startDrivingAfter()
 {
@@ -161,6 +177,10 @@ void followCharge(int *endPointReached)
 	int last_proportional = 0;
 	while(1)
 	{
+		/*if(detectObstacle() != 0)
+		{
+			break;
+		}*/
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
 		//up to and including line 153 is from the PID from pololu from page: https://www.pololu.com/docs/0J21/7.c
@@ -217,6 +237,10 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(noCrossing)
 	{
+		/*if(detectObstacle() != 0)
+		{
+			break;
+		}*/
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
