@@ -1,3 +1,37 @@
+/* Robotrun - an application for the Pololu 3pi Robot
+*
+* This application uses the Pololu AVR C/C++ Library.  For help, see:
+* -User's guide: http://www.pololu.com/docs/0J20
+* -Command reference: http://www.pololu.com/docs/0J18
+*
+* Created: 3/18/2023 11:16:12 AM
+*  Author: Kasper
+*/
+
+/*
+* Part of this code was derived but not copied from Pololu at https://www.pololu.com/docs/0J21/8.e
+* Though this isn't a copy or just plain rewritten in different variable names large parts do look alike
+*/
+
+/*#include <pololu/3pi.h>
+#include "FindLine.h"
+#include "MazeSolve.h"
+
+int main()
+{
+	char test;
+	initRobot();
+	while(1)
+	{
+		detectObstacle();
+	}
+	clear();
+	solveMaze();
+	wait_for_button_press(BUTTON_B);
+	wait_for_button_release(BUTTON_B);
+	solveMaze();
+}*/
+
 /* ROBO_RUN - an application for the Pololu 3pi Robot
  *
  * This application uses the Pololu AVR C/C++ Library.  For help, see:
@@ -9,11 +43,7 @@
  */
 #include "FindLine.h"
 #include "StockRoom.h"
-#include "ERROR_states.h"
-#include "Charging.h"
-#include "SolveMaze.h"
-#include "Home.h"
-#include "ManualDrive.h"
+#include "MazeSolve.h"
 #include <pololu/3pi.h>
 
 int main()
@@ -70,12 +100,12 @@ int main()
 			break;
 			
 			case manual: //manual state
-			floefsWakes();
+			//floefsWakes();
 			//cSTATE = lost;
 			break;
 			
 			case home: //home state
-			floefsSlaapt();
+			//floefsSlaapt();
 			cSTATE = maze;
 			//cSTATE = manual;
 			//cSTATE = lost;
