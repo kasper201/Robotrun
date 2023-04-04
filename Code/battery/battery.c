@@ -13,4 +13,5 @@ void batteryRead( unsigned int *percentage)
 		average += voltage;
 	}
 	*percentage = average % 10;
+	*percentage = ((percentage - 4500)/5);
 }
