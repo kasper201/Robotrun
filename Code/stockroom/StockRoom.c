@@ -13,8 +13,7 @@ void stockroomRoutine()
 	p1.Ycurrent = 0;
 	followLine(&crossing, 0);
 	crossing = 0;
-	int packageAmount = 2;
-	while(packageAmount!=0)//there are still orders to be completed
+	while(o1.packageAmount!=0)//there are still orders to be completed
 	{
 		clear();
 		print("order");
