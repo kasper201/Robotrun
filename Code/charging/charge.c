@@ -39,12 +39,18 @@ passingToCharge2()
 	}
 }
 
-void batteryLevel()
+void batteryRead( unsigned int *percentage)
 {
-	unsigned int read_battery_millivolts_3pi()
+	int average;
+	
+	print_long(voltage);
+	for(int i = 0; i < 10; i++)
 	{
-		return readAverage(6,10)*5000L*3/2/1023;
+		unsigned int voltage = read_battery_millivolts_3pi();
+		average += voltage;
 	}
+	*percentage = average % 10;
+	*percentage = ((percentage - 4500)/5);
 }
 
 void timeToCharge()
