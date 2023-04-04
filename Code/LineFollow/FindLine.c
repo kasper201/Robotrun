@@ -17,41 +17,30 @@ const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 /*
-int detectObstacle()
+void detectObstacle()
 {
-	unsigned int sensors[2];
-	read_line_sensors(sensors, QTR_EMITTERS_ON);
-	if(sensors[0] >= 500 || sensors [1] >= 500)
+	unsigned char sensors[2] = {0};
+	const char help[] ={
+		1,
+		2,
+		3,
+		4,
+		5,
+		6,
+		7,
+		8,
+		9,
+		10
+	};
+	clear();
+	while(1)
 	{
-		return 1;
-	}
-	else
-	{
-		return 0;
+		sensors[1] = analog_read_millivolts(5);
+			print(sensors[]);
+			wait_for_button_press(BUTTON_B);
+			wait_for_button_release(BUTTON_B);
 	}
 }*/
-
-void startDrivingAfter()
-{
-	while(!button_is_pressed(BUTTON_B))
-	{
-		print("Press B");
-		lcd_goto_xy(0,1);
-		print("to start");
-	}
-	while(button_is_pressed(BUTTON_B)){
-		clear();
-		print("Let go");
-		lcd_goto_xy(0,1);
-		print("to start");
-		delay_ms(1000);
-	}
-	
-	clear();
-	print("GO!!");
-	play("L4 MSD.D.D R8 ! O5 G2. R8" );
-	delay(3200);
-}
 
 void initRobot()
 {
@@ -74,17 +63,20 @@ void initRobot()
 	clear();
 	wait_for_button_release(BUTTON_B);
 	play("T 180 MLCEG"); //play sound to display start of calibration
-	delay_ms(500);
+	delay_ms(600);
 	//calibration
+	play("L4 MSD.D.D R8 ! O5 G2. R8" );
 	for(int calibrationCounter = 0; calibrationCounter < 113; calibrationCounter++)
 	{
 		print("Calib-");
 		lcd_goto_xy(0,1);
 		print("rating  ");
-		if(calibrationCounter < 30 || calibrationCounter > 85){
+		if(calibrationCounter < 30 || calibrationCounter > 85)
+		{
 			set_motors(30,-30);
 		}
-		else{
+		else
+		{
 			set_motors(-30,30);
 		}
 		calibrate_line_sensors(IR_EMITTERS_ON);
@@ -177,10 +169,6 @@ void followCharge(int *endPointReached)
 	int last_proportional = 0;
 	while(1)
 	{
-		/*if(detectObstacle() != 0)
-		{
-			break;
-		}*/
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
 		//up to and including line 153 is from the PID from pololu from page: https://www.pololu.com/docs/0J21/7.c
@@ -237,10 +225,6 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(noCrossing)
 	{
-		/*if(detectObstacle() != 0)
-		{
-			break;
-		}*/
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
@@ -268,6 +252,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			{
 				print("T-norm");
 				noCrossing = 0;//exits loop
+				break;//security
 			}
 		}
 		else if(sensors[0] >= 750 && sensors[2] >= 750 && sensors[4] <= 250 ) //checks if T-split on its side to the left
@@ -282,6 +267,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			{
 				print("T-left");
 				noCrossing = 0;//exits loop
+				break;//security
 			}
 		}
 		else if(sensors[4] >= 750 && sensors[2] >= 750 && sensors[0] <= 250) //checks if T-split on its side to the right
@@ -296,6 +282,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			{
 				print("T-right");
 				noCrossing = 0;//exits loop
+				break;//security
 			}
 		}
 		else if(sensors[0] >= 250 && sensors[2] <= 50 && sensors[4] >= 250) // 01110
@@ -323,6 +310,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			{
 				print("Cross");
 				noCrossing = 0;//exits loop
+				break;//security
 			}
 		}
 		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 0) //check if at corner to left 1*0*0
@@ -332,6 +320,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			lcd_goto_xy(0,1);
 			print(" left");
 			noCrossing = 0;
+			break;//security
 		}
 		else if(sensors[0] >= 750 && sensors[2] <= 250 && sensors[4] <= 250 && inMaze == 1) //check if at corner to left and take it if in maze 1*0*0
 		{
@@ -344,6 +333,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			lcd_goto_xy(0,1);
 			print("right");
 			noCrossing = 0;
+			break;//security
 		}
 		else if(sensors[4] >= 750 && sensors[2] <= 250 && sensors[0] <= 250 && inMaze == 0) //check if at corner to right and take it if in maze 0*0*1
 		{
@@ -356,6 +346,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			lcd_goto_xy(0,1);
 			print("line");
 			noCrossing = 0;//exits loop
+			break;//security
 		}
 		else
 		{
