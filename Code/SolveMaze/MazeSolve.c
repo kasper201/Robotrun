@@ -125,12 +125,14 @@ void simplify(int crossing, int *pathLength)
 	*pathLength -= 2;
 }
 
-void solveMaze()
+void solveMaze(int *mazeLocation)
 {
 	static int stockroom = 0;
 	int inMaze = 1;
 	static int irouteKnown = 0;
 	static int i = 0;
+	
+	*mazeLocation = stockroom;
 	
 	if(irouteKnown == 1)
 	{
