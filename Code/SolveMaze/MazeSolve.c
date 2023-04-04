@@ -77,19 +77,19 @@ void routeKnown(int *ToStockRoom)
 
 void convertArray(int arrayLength)
 {
-	for(int i = arrayLength; i >= 0; i--)
+	for(int i = arrayLength; i > 0; i--)
 	{
-		if(arrayToStockroom[i] == 3)
+		if(arrayToStockroom[arrayLength-i] == 3)
 		{
-			arrayFromStockroom[arrayLength-i] = 1;
+			arrayFromStockroom[i] = 1;
 		}
-		else if(arrayToStockroom[i] == 1)
+		else if(arrayToStockroom[arrayLength-i] == 1)
 		{
-			arrayFromStockroom[arrayLength - i] = 3;
+			arrayFromStockroom[i] = 3;
 		}
 		else
 		{
-			arrayFromStockroom[arrayLength - i] = 0;
+			arrayFromStockroom[i] = 0;
 		}
 	}
 }
@@ -161,13 +161,16 @@ void solveMaze()
 			}
 			else
 			{
+				set_motors(0,0);
 				turn(1);
 				arrayToStockroom[i] = 1;
 			}
 			i++;
 			simplify(crossing, &i);		
 		}
-		convertArray(i);
+		size_t size = sizeof(arrayToStockroom) / sizeof(arrayToStockroom[0]);
+		stockroom = 1;
+		convertArray(size);
+		irouteKnown = 1;
 	}	
-	irouteKnown = 1;
 }
