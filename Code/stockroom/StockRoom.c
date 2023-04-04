@@ -7,21 +7,21 @@ struct am amount;
 
 void stockroomRoutine()
 {
-	int packageAmount = 0;
 	int crossing = 0;
 	facing = minX;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
 	followLine(&crossing, 0);
 	crossing = 0;
-	clear();
-	print("order");
-	lcd_goto_xy(0,1);
-	print("reached");
-	play("o5 c#" );
-	delay_ms(3000);
-	while(packageAmount != 0)//there are still orders to be completed
+	int packageAmount = 2;
+	while(packageAmount!=0)//there are still orders to be completed
 	{
+		clear();
+		print("order");
+		lcd_goto_xy(0,1);
+		print("reached");
+		play("o5 c#" );
+		delay_ms(30000);
 		switch(facing) //turn facing minus X if not
 		{
 			case minY:
@@ -47,7 +47,7 @@ void stockroomRoutine()
 		amount.amountOfTwo = 0;
 		amount.amountOfThree = 0;
 	}
-	TurnBack();//drive back to the maze
+	//TurnBack();//drive back to the maze
 }
 
 void nextRound()
