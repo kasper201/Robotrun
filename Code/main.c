@@ -10,37 +10,38 @@
 #include "FindLine.h"
 #include "StockRoom.h"
 #include "ERROR_states.h"
+#include "Charging.h"
+#include "SolveMaze.h"
+#include "Home.h"
+#include "ManualDrive.h"
 #include <pololu/3pi.h>
 
 int main()
 {
-	bool &mazeBorder;
-	bool &chargeBorder;
 	enum STATE{init, maze, stockroom, charge, manual, home, lost};
 	enum STATE cSTATE = init;
+	int inMaze;
 	
 	while(1 /*ERROR == noERROR*/) //ERROR moet nog geschreven worden
 	{
 		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
 		{
 			case init: //init state
+			clear();
 			initRobot();
-			startDrivingAfter();
-			cSTATE = home;
-			cSTATE = manual;
-			cSTATE = lost;
+			cSTATE = stockroom;
 			break;
 			
 			case maze: //maze state
-			int inMaze = 1;
-			int inMaze = 0;
-			cSTATE = stockroom
-			cSTATE = home;
-			cSTATE = manual;
-			cSTATE = lost;
+			solveMaze();
+			cSTATE = stockroom;
+			//cSTATE = home;
+			//cSTATE = manual;
+			//cSTATE = lost;
 			break;
 			
 			case stockroom: //stockroom state
+			/*
 			if(manualOverWrite == true) //if there is an manual overwrite switch state
 			{
 				cSTATE = manual;
@@ -56,29 +57,37 @@ int main()
 				passingToCharge();
 			}
 			else //standard stockroom routine
-			{
+			{*/
 				stockroomRoutine();
-				cSTATE = maze;	
-			}
+				cSTATE = init;	
+			//}
 			break;
 			
 			case charge: //charge state
-			cSTATE = stockroom
-			cSTATE = manual;
-			cSTATE = lost;
+			//cSTATE = stockroom
+			//cSTATE = manual;
+			//cSTATE = lost;
 			break;
 			
 			case manual: //manual state
-			cSTATE = lost;
+			floefsWakes();
+			//cSTATE = lost;
 			break;
 			
 			case home: //home state
+			floefsSlaapt();
 			cSTATE = maze;
-			cSTATE = manual;
-			cSTATE = lost;
+			//cSTATE = manual;
+			//cSTATE = lost;
 			break;
 			
 			case lost: //lost state
+			clear();
+			print("HELP|:(");
+			lcd_goto_xy(0,1);
+			print("FLOEFS");
+			play("o5 c#" );
+			delay_ms(300);
 			cSTATE = manual;
 			break;
 		}	
