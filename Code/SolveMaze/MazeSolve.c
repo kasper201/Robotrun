@@ -16,9 +16,8 @@
 #include <pololu/3pi.h>
 #include "FindLine.h"
 #include "MazeSolve.h"
-#include "ObstacleDetection.h"
 
-char arrayToStockroom[128] = {3,3,1,3};
+char arrayToStockroom[128] = {0};
 char arrayFromStockroom[128] = {0};
 
 
@@ -28,8 +27,6 @@ void toStockRoom()
 	int check = 0;
 	while(1)
 	{
-		if(obstacleDetection() != 0)
-		break;
 		followLine(0,1);
 		turn(arrayToStockroom[i]);
 		if(check == 7)
@@ -46,8 +43,6 @@ void fromStockRoom()
 	int check = 0;
 	while(1)
 	{
-		if(obstacleDetection() != 0)
-		break;
 		followLine(&check,1);
 		turn(arrayFromStockroom[i]);
 		if(check == 7)
@@ -103,38 +98,22 @@ void simplify(int crossing, int *pathLength)
 		switch(arrayToStockroom[*pathLength-i])
 		{			
 			case 1:
-			totalTurn += 90;
+			totalTurn += 1;
 			break;
 			
 			case 3:
-			totalTurn += 270;
+			totalTurn += 3;
 			break;
 			
 			case 2:
-			totalTurn += 180;
+			totalTurn += 2;
 			break;
 		}
 	}
-	totalTurn %= 360;
+	totalTurn %= 4;
 	
-	switch(totalTurn)
-	{
-		case 0:
-		arrayToStockroom[*pathLength-3] = 0;
-		break;
-		
-		case 90:
-		arrayToStockroom[*pathLength-3] = 1;
-		break;
-		
-		case 180:
-		arrayToStockroom[*pathLength-3] = 2;
-		break;
-		
-		case 270:
-		arrayToStockroom[*pathLength-3] = 3;
-		break;
-	}
+	arrayToStockroom[*pathLength-3] = totalTurn;
+	
 	*pathLength -= 2;
 }
 
@@ -153,8 +132,6 @@ void solveMaze()
 	{
 		while(1)
 		{
-			if(obstacleDetection() != 0)
-			break;
 			int crossing = 0;
 			followLine(&crossing, inMaze);
 			if(crossing == 7)
