@@ -1,12 +1,12 @@
 /* ROBO_RUN - an application for the Pololu 3pi Robot
- *
- * This application uses the Pololu AVR C/C++ Library.  For help, see:
- * -User's guide: http://www.pololu.com/docs/0J20
- * -Command reference: http://www.pololu.com/docs/0J18
- *
- * Created: 3/2/2023 10:40:48 AM
- *  Author: mikvb
- */
+*
+* This application uses the Pololu AVR C/C++ Library.  For help, see:
+* -User's guide: http://www.pololu.com/docs/0J20
+* -Command reference: http://www.pololu.com/docs/0J18
+*
+* Created: 3/2/2023 10:40:48 AM
+*  Author: mikvb
+*/
 #include "FindLine.h"
 #include "StockRoom.h"
 #include "MazeSolve.h"
@@ -17,96 +17,88 @@ int main()
 {
 	enum STATE{init, maze, stockroom, charge, manual, home, lost};
 	enum STATE cSTATE = init;
-	
-	while(1)
+	int percentage = 100;
+
+	switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
 	{
-		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
+		case init: //init state
+		clear();
+		initRobot();
+		followLine(0,0);
+		cSTATE = home;
+		break;
+		
+		
+		case maze: //maze state
+		;int backOrNot;
+		solveMaze(&backOrNot);
+		if(backOrNot == 1)
 		{
-			case init: //init state
-			clear();
-			initRobot();
 			cSTATE = stockroom;
-			break;
-			
-			
-			case maze: //maze state
-			solveMaze();
-			cSTATE = stockroom;
+		}
+		else if(backOrNot == 0)
+		{
 			cSTATE = home;
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
-			if(1==2)
-			{
-				cSTATE = lost;
-			}
-			break;
-			
-			
-			case stockroom: //stockroom state
-			stockroomRoutine();
-			cSTATE = maze;	
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
-			if(1==2)
-			{
-				cSTATE = lost;
-			}
-			break;
-			
-			
-			case charge: //charge state
-			solveMaze();
-			int ChargePoint = 0;
-			passingToCharge();
-			followCharge(ChargePoint);
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
-			if(1==2)
-			{
-				cSTATE = lost;
-			}
-			break;
-			
-			
-			case manual: //manual state
-			floefsWakes();
-			cSTATE = init;
-			break;
-			
-			
-			case home: //home state
-			floefsSlaapt();
+		}
+		break;
+		
+		
+		case stockroom: //stockroom state
+		stockroomRoutine();
+		set_motors(50, 50);
+		delay_ms(100);
+		cSTATE = maze;
+		break;
+		
+		
+		case charge: //charge state
+		solveMaze(0);
+		int *ChargePoint = 0;
+		passingToCharge();
+		followCharge(ChargePoint);
+		timeToCharge();
+		passingToCharge2();
+		solveMaze(0);
+		cSTATE = home;
+		break;
+		
+		
+		case manual: //manual state
+		floefsWakes();
+		cSTATE = init;
+		break;
+		
+		
+		case home: //home state
+		clear();
+		print("FLOEFS");
+		lcd_goto_xy(0,1);
+		print("WAKES");
+		play("o5 c#" );
+		delay_ms(1000);
+		if(percentage<60)
+		{
+			cSTATE = charge;
+		}
+		if(o1.packageAmount>0)
+		{
 			cSTATE = maze;
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
-			if(1==2)
-			{
-				cSTATE = lost;
-			}
-			break;
-			
-			
-			case lost: //lost state
-			clear();
-			print("HELP|:(");
-			lcd_goto_xy(0,1);
-			print("FLOEFS");
-			play("o5 c#" );
-			delay_ms(300);
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
-			break;
-		}	
+		}
+		break;
+		
+		
+		case lost: //lost state
+		clear();
+		print("HELP|:(");
+		lcd_goto_xy(0,1);
+		print("FLOEFS");
+		play("o5 c#" );
+		delay_ms(300);
+		if(1==2)
+		{
+			cSTATE = manual;
+		}
+		break;
 	}
-	return 0;
+return 0;
 }
