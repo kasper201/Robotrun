@@ -47,7 +47,7 @@ void stockroomRoutine()
 	TurnBack();//drive back to the maze
 }
 
-void nextRound();
+void nextRound()
 {
 	p1.Xpackage = 0;
 	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0)
