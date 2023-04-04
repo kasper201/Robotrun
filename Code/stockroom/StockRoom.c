@@ -2,6 +2,9 @@
 #include <avr/pgmspace.h>
 #include "StockRoom.h"
 
+struct am{int amountOfZero, amountOfOne, amountOfTwo, amountOfThree;};
+struct am amount;
+
 void stockroomRoutine()
 {
 	int packageAmount = 0;
