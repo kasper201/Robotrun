@@ -111,7 +111,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(3)
+					turn(3);
 				}
 				facing = plusY;
 				break;
@@ -123,7 +123,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(0)
+					turn(0);
 				}
 				facing = plusY;
 				break;
@@ -135,7 +135,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(1)
+					turn(1);
 				}
 				facing = plusY;
 				break;
@@ -147,7 +147,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(2)
+					turn(2);
 				}
 				facing = plusY;
 				break;
@@ -184,7 +184,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(3)
+					turn(3);
 				}
 				facing = plusY;
 				break;
@@ -196,7 +196,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(0)
+					turn(0);
 				}
 				facing = plusY;
 				break;
@@ -208,7 +208,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(1)
+					turn(1);
 				}
 				facing = plusY;
 				break;
@@ -220,7 +220,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(2)
+					turn(2);
 				}
 				facing = plusY;
 				break;
@@ -257,7 +257,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(3)
+					turn(3);
 				}
 				facing = plusY;
 				break;
@@ -269,7 +269,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(0)
+					turn(0);
 				}
 				facing = plusY;
 				break;
@@ -281,7 +281,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(1)
+					turn(1);
 				}
 				facing = plusY;
 				break;
@@ -293,7 +293,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(2)
+					turn(2);
 				}
 				facing = plusY;
 				break;
@@ -330,7 +330,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(3)
+					turn(3);
 				}
 				facing = plusY;
 				break;
@@ -342,7 +342,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(0)
+					turn(0);
 				}
 				facing = plusY;
 				break;
@@ -354,7 +354,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(1)
+					turn(1);
 				}
 				facing = plusY;
 				break;
@@ -366,7 +366,7 @@ void findPackageY()
 				}
 				else
 				{
-					turn(2)
+					turn(2);
 				}
 				facing = plusY;
 				break;
@@ -431,4 +431,3 @@ void TurnBack()
 		}
 	}
 }
-
