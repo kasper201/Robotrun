@@ -27,9 +27,13 @@ void toStockRoom()
 	int check = 0;
 	while(1)
 	{
-		followLine(0,1);
+		followLine(&check,1);
 		turn(arrayToStockroom[i]);
 		if(check == 7)
+		{
+			break;
+		}
+		else if(check == 99)
 		{
 			break;
 		}
@@ -46,6 +50,10 @@ void fromStockRoom()
 		followLine(&check,1);
 		turn(arrayFromStockroom[i]);
 		if(check == 7)
+		{
+			break;
+		}
+		else if(check == 99)
 		{
 			break;
 		}
