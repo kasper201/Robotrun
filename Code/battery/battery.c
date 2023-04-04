@@ -5,10 +5,11 @@
 void batteryRead( unsigned int *percentage)
 {
 	int average;
-	unsigned int voltage = read_battery_millivolts_3pi();
+	
 	print_long(voltage);
 	for(int i = 0; i < 10; i++)
 	{
+		unsigned int voltage = read_battery_millivolts_3pi();
 		average += voltage;
 	}
 	*percentage = average % 10;
