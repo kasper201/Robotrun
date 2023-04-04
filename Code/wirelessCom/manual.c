@@ -12,8 +12,6 @@ void floefsWakes()
 	int rechts;
 	int links;
 	int achteruit;
-	int knop;
-	knop == serial_read();
 	
 	char command = read_next_byte();
 	
