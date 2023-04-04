@@ -54,7 +54,7 @@ void floefsWakes()
 		break;
 		
 		
-		case (char)0x31:: //vooruit
+		case (char)0x31: //vooruit
 		vooruit = 50;
 		if(vooruit != 150)
 		{
