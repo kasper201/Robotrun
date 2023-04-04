@@ -1,8 +1,6 @@
 #ifndef StockRoom_H_
 #define StockRoom_H_
 
-int packageAmount;
-
 enum direction{minX, plusX, minY, plusY};
 enum direction facing;
 
@@ -19,6 +17,5 @@ void nextRound()
 void findPackageX()
 void findPackageY()
 void TurnBack()
-void passingToCharge()
 
 #endif
