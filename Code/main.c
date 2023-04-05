@@ -14,14 +14,14 @@
 #include "ComRead.h"
 #include <pololu/3pi.h>
 
-enum STATE{init, maze, stockroom, charge, manual, home, lost};
+enum STATE{init, stockroom, charge, manual, home, lost};
 enum STATE cSTATE = init;
 
 int main()
 {
 	while(1)
 	{
-		int percentage = 60;
+		int percentage = 50;
 		o1.packageAmount = 2;
 		int backOrNot;
 		
@@ -30,40 +30,20 @@ int main()
 			case init: //init state
 			clear();
 			initRobot();
+			delay_ms(100);
 			followLine(0,0);
 			set_motors(0,0);
 			cSTATE = home;
 			break;
 			
-			
-			case maze: //maze state
-			solveMaze(&backOrNot);
-			if(backOrNot == 1)
-			{
-				cSTATE = stockroom;
-			}
-			else if(backOrNot == 0)
-			{
-				cSTATE = home;
-			}
-			break;
-			
-			
 			case stockroom: //stockroom state
 			stockroomRoutine();
-			delay_ms(100);
-			cSTATE = maze;
+			cSTATE = home;
 			break;
 			
 			
 			case charge: //charge state
-			solveMaze(0);
-			int *ChargePoint = 0;
-			passingToCharge();
-			followCharge(ChargePoint);
-			timeToCharge();
-			passingToCharge2();
-			solveMaze(0);
+			chargeRoutine();
 			cSTATE = home;
 			break;
 			
@@ -79,14 +59,14 @@ int main()
 			print("FLOEFS");
 			lcd_goto_xy(0,1);
 			print("WAKES");
-			delay_ms(1000);
+			delay_ms(500);
 			if(percentage<60)
 			{
 				cSTATE = charge;
 			}
-			if(o1.packageAmount>0)
+			if(o1.packageAmount>0 && percentage>=60)
 			{
-				cSTATE = maze;
+				cSTATE = stockroom;
 			}
 			break;
 			
