@@ -84,12 +84,21 @@ void stockroomRoutine()
 
 void nextRound()
 {
+	o1.Xorders[0] = 2;
+	o1.Xorders[1] = 0;
+	o1.Xorders[2] = 4;
+	o1.Xorders[3] = 0;
+		
+	o1.Yorders[0] = 0;
+	o1.Yorders[1] = 3;
+	o1.Yorders[2] = 0;
+	o1.Yorders[3] = 2;
 	p1.Xpackage = 0;
-	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
+	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0) // if no packages are at any of the Y coords of this X, continue looping till it is true or end has been reached.
 	{
-		for(int teller=0; teller<32; teller++)
+		for(int teller = 0; teller < 4; teller++)
 		{
-			if(o1.Xorders[teller]==p1.Xpackage)
+			if(o1.Xorders[teller] == p1.Xpackage)
 			{
 				switch(o1.Yorders[teller])
 				{
