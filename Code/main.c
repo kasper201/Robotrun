@@ -11,7 +11,8 @@
 #include "StockRoom.h"
 #include "MazeSolve.h"
 #include "Charging.h"
-#include "ComRead.h"
+//#include "ComRead.h"
+#include "manual.h"
 #include <pololu/3pi.h>
 
 enum STATE{init, stockroom, charge, manual, home, lost};
@@ -21,9 +22,8 @@ int main()
 {
 	while(1)
 	{
-		int percentage = 50;
+		unsigned int percentage = 100;
 		o1.packageAmount = 2;
-		int backOrNot;
 		
 		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
 		{
@@ -48,8 +48,8 @@ int main()
 			break;
 			
 			
-			case manual: //manual state
-			//floefsWakes();
+			case manual:
+			drive();
 			cSTATE = init;
 			break;
 			
@@ -60,6 +60,7 @@ int main()
 			lcd_goto_xy(0,1);
 			print("WAKES");
 			delay_ms(500);
+			//batteryRead(&percentage);
 			if(percentage<60)
 			{
 				cSTATE = charge;
