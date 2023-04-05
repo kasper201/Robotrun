@@ -1,3 +1,8 @@
+#include <pololu/3pi.h>
+#include "ManualDrive.h"
+
+unsigned char buffer[100];
+
 void floefsWakes()
 {
 	pololu_3pi_init(2000);
@@ -8,12 +13,12 @@ void floefsWakes()
 	serial_set_baud_rate(9600);
 	serial_receive_ring(buffer, 100);
 	
-	int vooruit;
-	int rechts;
-	int rechtsL;
-	int links;
-	int linksR;
-	int achteruit;
+	int vooruit = 100;
+	int rechts -50;
+	int rechtsL 50;
+	int links -50;
+	int linksR 50;
+	int achteruit -100;
 	
 	char command = read_next_byte();
 	
@@ -97,4 +102,22 @@ void floefsWakes()
 		play("o7l16crc");
 		break; // bad command
 	}
+}
+
+char read_next_byte()
+{
+	while(serial_get_received_bytes() == read_index)
+	{
+		play_check();
+
+		// pid_check takes some time; only run it if we don't have more bytes to process
+		if(serial_get_received_bytes() == read_index)
+		pid_check();
+		
+	}
+	char ret = buffer[read_index];
+	read_index ++;
+	if(read_index >= 100)
+	read_index = 0;
+	return ret;
 }
