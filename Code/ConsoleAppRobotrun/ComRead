@@ -1,4 +1,29 @@
+#include <pololu/3pi.h>
+
 void ComCheck()
 {
-	
+	send_battery_millivolts();
+	send_line_position();
+}
+
+void send_battery_millivolts()
+{
+	int message[1];
+	message[0] = read_battery_millivolts();
+	serial_send_blocking((char *)message, 2);
+}
+
+void send_line_position()
+{
+	int message[1];
+	unsigned int tmp_sensors[5];
+	int line_position;
+
+	if(pid_enabled)
+	line_position = last_proportional+2000;
+	else line_position = read_line(tmp_sensors, IR_EMITTERS_ON);
+
+	message[0] = line_position;
+
+	serial_send_blocking((char *)message, 2);
 }
