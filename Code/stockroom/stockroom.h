@@ -15,5 +15,6 @@ void nextRound();
 void findPackageX();
 void findPackageY();
 void TurnBack();
+void turnToY();
 
 #endif
