@@ -1,23 +1,32 @@
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
 #include "StockRoom.h"
+#include "Charging.h"
+#include "MazeSolve.h"
+#include "FindLine.h"
 
-struct am{int amountOfZero, amountOfOne, amountOfTwo, amountOfThree;};
+struct am{int amountOfZero, amountOfOne, amountOfTwo, amountOfThree, amountOfFour;};
 struct am amount;
 
 void stockroomRoutine()
 {
+	int crossing = 0;
 	delay_ms(100);
 	solveMaze();
 	delay_ms(100);
-	
-	int crossing = 0;
-	facing = minY;
-	p1.Xcurrent = 0;
-	p1.Ycurrent = 0;
-	
 	followLine(&crossing, 0);
 	crossing = 0;
+	
+	facing = minX;
+	p1.Xcurrent = 0;
+	p1.Ycurrent = 0;
+	p1.Xpackage = 2;
+	amount.amountOfZero = 0;
+	amount.amountOfOne = 0;
+	amount.amountOfTwo = 1;
+	amount.amountOfThree = 0;
+	amount.amountOfFour = 0;
+	p1.amountOfX = 1;
 	
 	clear();
 	print("calcul");
@@ -50,14 +59,16 @@ void stockroomRoutine()
 			facing = minX;
 			break;
 		}
-		nextRound(); //decides witch packages are next
+		//nextRound(); //decides witch packages are next
 		findPackageX(); //go to the X
+		delay_ms(500);
 		findPackageY();	//get all the packages on this X
 		
 		amount.amountOfZero = 0;
 		amount.amountOfOne = 0;
 		amount.amountOfTwo = 0;
 		amount.amountOfThree = 0;
+		amount.amountOfFour = 0;
 	}
 	TurnBack();//drive back to the maze
 	delay_ms(100);
@@ -74,7 +85,7 @@ void stockroomRoutine()
 void nextRound()
 {
 	p1.Xpackage = 0;
-	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0)
+	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
 	{
 		for(int teller=0; teller<32; teller++)
 		{
@@ -94,12 +105,19 @@ void nextRound()
 					case 3:
 					amount.amountOfThree++;
 					break;
+					case 4:
+					amount.amountOfFour++;
+					break;
 				}
 			}
 		}
-		if(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0)
+		if(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
 		{
 			p1.Xpackage++;
+		}
+		if(p1.Xpackage==5)
+		{
+			o1.packageAmount = 0;
 		}
 	}
 }
@@ -122,8 +140,88 @@ void findPackageX()
 void findPackageY()
 {
 	int crossing = 0;
-	while(amount.amountOfZero!=0 && amount.amountOfOne!=0 && amount.amountOfTwo!=0 && amount.amountOfThree!=0)
+	while(p1.amountOfX != 0)
 	{
+		if(amount.amountOfFour>0)
+		{
+			switch(facing) //turn facing minus X
+			{
+				case minX:
+				if(p1.Ycurrent<4)
+				{
+					turn(1);
+				}
+				else
+				{
+					turn(3);
+				}
+				facing = plusY;
+				break;
+				
+				case minY:
+				if(p1.Ycurrent<4)
+				{
+					turn(2);
+				}
+				else
+				{
+					turn(0);
+				}
+				facing = plusY;
+				break;
+				
+				case plusX:
+				if(p1.Ycurrent<4)
+				{
+					turn(3);
+				}
+				else
+				{
+					turn(1);
+				}
+				facing = plusY;
+				break;
+				
+				case plusY:
+				if(p1.Ycurrent<4)
+				{
+					turn(0);
+				}
+				else
+				{
+					turn(2);
+				}
+				facing = plusY;
+				break;
+			}
+			while(p1.Ycurrent<=4) //drive until the y coords is reached
+			{
+				crossing = 0;
+				followLine(&crossing, 0);
+				if(crossing != 0)
+				{
+					turn(0);
+				}
+				if(facing == plusY)
+				{
+					p1.Ycurrent++;
+				}
+				else if(facing == minY)
+				{
+					p1.Ycurrent--;
+				}
+			}
+			amount.amountOfFour--;
+			clear();
+			print("order");
+			lcd_goto_xy(0,1);
+			print("reached");
+			play("o5 c#" );
+			delay_ms(300);
+			o1.packageAmount--;
+			p1.amountOfX--;
+		}
+		
 		if(amount.amountOfThree>0)
 		{
 			switch(facing) //turn facing minus X
@@ -177,13 +275,21 @@ void findPackageY()
 				break;
 			}
 			
-			while(p1.Ycurrent<=3) //drive until the y coords is reached
+			while(p1.Ycurrent!=3) //drive until the y coords is reached
 			{
 				crossing = 0;
 				followLine(&crossing, 0);
 				if(crossing != 0)
 				{
 					turn(0);
+				}
+				if(facing == plusY)
+				{
+					p1.Ycurrent++;
+				}
+				else if(facing == minY)
+				{
+					p1.Ycurrent--;
 				}
 			}
 			
@@ -195,6 +301,7 @@ void findPackageY()
 			play("o5 c#" );
 			delay_ms(300);
 			o1.packageAmount--;
+			p1.amountOfX--;
 		}
 		
 		
@@ -251,13 +358,21 @@ void findPackageY()
 				break;
 			}
 			
-			while(p1.Ycurrent<=2) //drive until the y coords is reached
+			while(p1.Ycurrent!=2) //drive until the y coords is reached
 			{
 				crossing = 0;
 				followLine(&crossing, 0);
 				if(crossing != 0)
 				{
 					turn(0);
+				}
+				if(facing == plusY)
+				{
+					p1.Ycurrent++;
+				}
+				else if(facing == minY)
+				{
+					p1.Ycurrent--;
 				}
 			}
 			
@@ -269,6 +384,7 @@ void findPackageY()
 			play("o5 c#" );
 			delay_ms(300);
 			o1.packageAmount--;
+			p1.amountOfX--;
 		}
 		
 		
@@ -325,13 +441,21 @@ void findPackageY()
 				break;
 			}
 			
-			while(p1.Ycurrent<=1) //drive until the y coords is reached
+			while(p1.Ycurrent!=1) //drive until the y coords is reached
 			{
 				crossing = 0;
 				followLine(&crossing, 0);
 				if(crossing != 0)
 				{
 					turn(0);
+				}
+				if(facing == plusY)
+				{
+					p1.Ycurrent++;
+				}
+				else if(facing == minY)
+				{
+					p1.Ycurrent--;
 				}
 			}
 			
@@ -343,6 +467,7 @@ void findPackageY()
 			play("o5 c#" );
 			delay_ms(300);
 			o1.packageAmount--;
+			p1.amountOfX--;
 		}
 		
 		
@@ -399,13 +524,21 @@ void findPackageY()
 				break;
 			}
 			
-			while(p1.Ycurrent<=0) //drive until the y coords is reached
+			while(p1.Ycurrent!=0) //drive until the y coords is reached
 			{
 				crossing = 0;
 				followLine(&crossing, 0);
 				if(crossing != 0)
 				{
 					turn(0);
+				}
+				if(facing == plusY)
+				{
+					p1.Ycurrent++;
+				}
+				else if(facing == minY)
+				{
+					p1.Ycurrent--;
 				}
 			}
 			
@@ -417,6 +550,7 @@ void findPackageY()
 			play("o5 c#" );
 			delay_ms(300);
 			o1.packageAmount--;
+			p1.amountOfX--;
 		}
 	}
 }
