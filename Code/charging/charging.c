@@ -45,10 +45,16 @@ void passingToCharge()
 	delay_ms(200);
 }
 
-passingToCharge2()
+void passingToCharge2()
 {
 	int crossing=0;
 	followLine(&crossing, 0);
+	while(crossing == 69)
+	{
+		set_motors(0,0);
+		delay_ms(2500);
+		followLine(&crossing,0);
+	}
 	turn(3);
 	while(crossing!=1)
 	{
@@ -76,7 +82,6 @@ void batteryRead( unsigned int *percentage)
 		unsigned int voltage = read_battery_millivolts_3pi();
 		average += voltage;
 	}
-	*percentage = average % 10;
 	*percentage = ((*percentage/50));
 }
 
