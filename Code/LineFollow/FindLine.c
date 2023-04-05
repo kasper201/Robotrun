@@ -393,4 +393,5 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		else
 			set_motors(max, (max-power_difference));
 	}
+	set_motors(0,0);
 }
