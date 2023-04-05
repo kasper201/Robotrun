@@ -49,8 +49,7 @@ void batteryRead( unsigned int *percentage)
 		unsigned int voltage = read_battery_millivolts_3pi();
 		average += voltage;
 	}
-	*percentage = average % 10;
-	*percentage = ((percentage - 4500)/5);
+	*percentage = (read_battery_millivolts_3pi()/50);
 }
 
 void timeToCharge()
