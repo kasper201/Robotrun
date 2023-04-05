@@ -4,7 +4,7 @@
 enum direction{minX, plusX, minY, plusY};
 enum direction facing;
 
-struct coords{int Xcurrent, Ycurrent, Xpackage;};
+struct coords{int Xcurrent, Ycurrent, Xpackage, amountOfX;};
 struct coords p1;
 
 struct orders{int Xorders[32], Yorders[32], packageAmount;};
