@@ -1,170 +1,96 @@
-/* Robotrun - an application for the Pololu 3pi Robot
- *
- * This application uses the Pololu AVR C/C++ Library.  For help, see:
- * -User's guide: http://www.pololu.com/docs/0J20
- * -Command reference: http://www.pololu.com/docs/0J18
- *
- * Created: 3/18/2023 11:16:12 AM
- *  Author: Kasper
- */
-
-/*
- * Part of this code was derived but not copied from Pololu at https://www.pololu.com/docs/0J21/8.e
- * Though this isn't a copy or just plain rewritten in different variable names large parts do look alike
- */
-
 #include <pololu/3pi.h>
-#include "FindLine.h"
+#include "Charging.h"
 #include "MazeSolve.h"
+#include "FindLine.h"
 
-char arrayToStockroom[128] = {0};
-
-
-void toStockRoom()
+void chargeRoutine()
 {
-	int i = 0;
-	int check = 0;
-	while(1)
-	{
-		followLine(&check,1);
-		turn(arrayToStockroom[i]);
-		if(check == 7)
-		{
-			break;
-		}
-		else if(check == 99)
-		{
-			break;
-		}
-		else if(check == 69)
-		{
-			set_motors(0,0);
-			delay_ms(1000);
-		}
-		i++;
-	}
+	delay_ms(100);
+	solveMaze();
+	int *ChargePoint = 0;
+	delay_ms(100);
+	passingToCharge();
+	delay_ms(100);
+	followCharge(ChargePoint);
+	timeToCharge();
+	delay_ms(100);
+	passingToCharge2();
+	delay_ms(100);
+	solveMaze();
+	delay_ms(100);
+	followLine(0,0);
+	set_motors(0,0);
+	turn(1);
+	followLine(0,0);
+	set_motors(0,0);
+	delay_ms(100);
 }
 
-void fromStockRoom()
+void passingToCharge()
 {
-	int i = 0;
-	int check = 0;
-	while(1)
+	int crossing=0;
+	followLine(&crossing, 0);
+	turn(1);
+	while(crossing!=1)
 	{
-		followLine(&check,1);
-		if(check == 2)
+		crossing=0;
+		followLine(&crossing, 0);
+		if(crossing!=0)
 		{
 			turn(0);
 		}
-		else if(check == 7)
-		{
-			break;
-		}
-		else
-		{
-			turn(1);
-		}
-		i++;
 	}
+	turn(1);
+	set_motors(50, 50);
+	delay_ms(200);
 }
 
-void routeKnown(int *ToStockRoom)
-{	
-	if(*ToStockRoom)
-	{
-		toStockRoom();
-		*ToStockRoom = 0;
-	}
-	else
-	{
-		fromStockRoom();
-		*ToStockRoom = 1;
-	}
-}
-
-void simplify(int crossing, int *pathLength)
+void passingToCharge2()
 {
-	if(*pathLength < 3 || arrayToStockroom[(*pathLength-2)] != 2)
-		return;
-		
-	int i;
-	int totalTurn = 0;
-	for(i = 1; i <= 3; i++)
+	int crossing=0;
+	followLine(&crossing, 0);
+	while(crossing == 69)
 	{
-		switch(arrayToStockroom[*pathLength-i])
-		{			
-			case 1:
-			totalTurn += 1;
-			break;
-			
-			case 3:
-			totalTurn += 3;
-			break;
-			
-			case 2:
-			totalTurn += 2;
-			break;
+		set_motors(0,0);
+		delay_ms(2500);
+		followLine(&crossing,0);
+	}
+	turn(3);
+	while(crossing!=1)
+	{
+		crossing=0;
+		followLine(&crossing, 0);
+		if(crossing!=0)
+		{
+			turn(0);
 		}
 	}
-	totalTurn %= 4;
-	
-	arrayToStockroom[*pathLength-3] = totalTurn;
-	
-	*pathLength -= 2;
+	turn(3);
+	while(crossing!=7)
+	{
+		crossing=0;
+		followLine(&crossing, 0);
+	}
 }
 
-void solveMaze(int *mazeLocation)
+void batteryRead( unsigned int *percentage)
 {
-	*mazeLocation %= 2;
-	static int stockroom = 0;
-	int inMaze = 1;
-	static int irouteKnown = 0;
-	static int i = 0;
+	int average;
 	
-	*mazeLocation = stockroom;
-	
-	if(irouteKnown == 1)
+	for(int i = 0; i < 10; i++)
 	{
-		routeKnown(&stockroom);
+		unsigned int voltage = read_battery_millivolts_3pi();
+		average += voltage;
 	}
-	else
-	{
-		while(1)
-		{
-			int crossing = 0;
-			followLine(&crossing, inMaze);
-			if(crossing == 7)
-			{
-				break;
-			}
-			else if(crossing == 2)
-			{
-				set_motors(0,0);
-				turn(0);
-				arrayToStockroom[i] = 0;
-			}
-			else if(crossing == 99)
-			{
-				set_motors(0,0);
-				turn(1);
-				delay_ms(20);
-				arrayToStockroom[i] = 2;
-			}
-			else if(crossing == 69)
-			{
-				*mazeLocation += 2;
-				break;
-			}
-			else
-			{
-				set_motors(0,0);
-				turn(1);
-				arrayToStockroom[i] = 1;
-			}
-			i++;
-			simplify(crossing, &i);		
-		}
-		irouteKnown = 1;
-	}	
-	*mazeLocation = stockroom;
+	*percentage = ((*percentage/505));
+}
+
+void timeToCharge()
+{
+	clear();
+	print("FLOEFS");
+	lcd_goto_xy(0,1);
+	print("SLEEPS");
+	play("o5 c#" );
+	delay_ms(10000);
 }
