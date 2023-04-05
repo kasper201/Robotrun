@@ -4,6 +4,7 @@
 #include "Charging.h"
 #include "MazeSolve.h"
 #include "FindLine.h"
+#include "ComRead.h"
 
 struct am{int amountOfZero, amountOfOne, amountOfTwo, amountOfThree, amountOfFour;};
 struct am amount;
@@ -20,13 +21,13 @@ void stockroomRoutine()
 	facing = minX;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
-	p1.Xpackage = 2;
-	amount.amountOfZero = 0;
+	p1.Xpackage = 0;
+	amount.amountOfZero = 1;
 	amount.amountOfOne = 0;
-	amount.amountOfTwo = 1;
+	amount.amountOfTwo = 0;
 	amount.amountOfThree = 1;
 	amount.amountOfFour = 0;
-	p1.amountOfX = 3;
+	p1.amountOfX = 2;
 	
 	clear();
 	print("calcul");
@@ -84,21 +85,12 @@ void stockroomRoutine()
 
 void nextRound()
 {
-	o1.Xorders[0] = 2;
-	o1.Xorders[1] = 0;
-	o1.Xorders[2] = 4;
-	o1.Xorders[3] = 0;
-		
-	o1.Yorders[0] = 0;
-	o1.Yorders[1] = 3;
-	o1.Yorders[2] = 0;
-	o1.Yorders[3] = 2;
 	p1.Xpackage = 0;
-	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0) // if no packages are at any of the Y coords of this X, continue looping till it is true or end has been reached.
+	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
 	{
-		for(int teller = 0; teller < 4; teller++)
+		for(int teller=0; teller<32; teller++)
 		{
-			if(o1.Xorders[teller] == p1.Xpackage)
+			if(o1.Xorders[teller]==p1.Xpackage)
 			{
 				switch(o1.Yorders[teller])
 				{
@@ -155,60 +147,7 @@ void findPackageY()
 		
 		if(amount.amountOfFour>0)
 		{
-			switch(facing) //turn facing minus X
-			{
-				case minX:
-				if(p1.Ycurrent<4)
-				{
-					turn(1);
-					facing = plusY;
-				}
-				else
-				{
-					turn(3);
-					facing = minY;
-				}
-				break;
-				
-				case minY:
-				if(p1.Ycurrent<4)
-				{
-					turn(2);
-					facing = plusY;
-				}
-				else
-				{
-					turn(0);
-					facing = minY;
-				}
-				break;
-				
-				case plusX:
-				if(p1.Ycurrent<4)
-				{
-					turn(3);
-					facing = plusY;
-				}
-				else
-				{
-					turn(1);
-					facing = minY;
-				}
-				break;
-				
-				case plusY:
-				if(p1.Ycurrent<4)
-				{
-					turn(0);
-					facing = plusY;
-				}
-				else
-				{
-					turn(2);
-					facing = minY;
-				}
-				break;
-			}
+			turnToY(4,crossing);
 			
 			while(p1.Ycurrent<=4) //drive until the y coords is reached
 			{
@@ -241,60 +180,7 @@ void findPackageY()
 		
 		if(amount.amountOfThree>0)
 		{
-			switch(facing) //turn facing minus X
-			{
-				case minX:
-				if(p1.Ycurrent<3)
-				{
-					turn(1);
-					facing = plusY;
-				}
-				else
-				{
-					turn(3);
-					facing = minY;
-				}
-				break;
-				
-				case minY:
-				if(p1.Ycurrent<3)
-				{
-					turn(2);
-					facing = plusY;
-				}
-				else
-				{
-					turn(0);
-					facing = minY;
-				}
-				break;
-				
-				case plusX:
-				if(p1.Ycurrent<3)
-				{
-					turn(3);
-					facing = plusY;
-				}
-				else
-				{
-					turn(1);
-					facing = minY;
-				}
-				break;
-				
-				case plusY:
-				if(p1.Ycurrent<3)
-				{
-					turn(0);
-					facing = plusY;
-				}
-				else
-				{
-					turn(2);
-					facing = minY;
-				}
-				break;
-			}
+			turnToY(3,crossing);
 			
 			while(p1.Ycurrent!=3) //drive until the y coords is reached
 			{
@@ -329,60 +215,7 @@ void findPackageY()
 		
 		if(amount.amountOfTwo>0)
 		{
-			switch(facing) //turn facing minus X
-			{
-				case minX:
-				if(p1.Ycurrent<2)
-				{
-					turn(1);
-					facing = plusY;
-				}
-				else
-				{
-					turn(3);
-					facing = minY;
-				}
-				break;
-				
-				case minY:
-				if(p1.Ycurrent<2)
-				{
-					turn(2);
-					facing = plusY;
-				}
-				else
-				{
-					turn(0);
-					facing = minY;
-				}
-				break;
-				
-				case plusX:
-				if(p1.Ycurrent<2)
-				{
-					turn(3);
-					facing = plusY;
-				}
-				else
-				{
-					turn(1);
-					facing = minY;
-				}
-				break;
-				
-				case plusY:
-				if(p1.Ycurrent<2)
-				{
-					turn(0);
-					facing = plusY;
-				}
-				else
-				{
-					turn(2);
-					facing = minY;
-				}
-				break;
-			}
+			turnToY(2,crossing);
 			
 			while(p1.Ycurrent!=2) //drive until the y coords is reached
 			{
@@ -417,60 +250,7 @@ void findPackageY()
 		
 		if(amount.amountOfOne>0)
 		{
-			switch(facing) //turn facing minus X
-			{
-				case minX:
-				if(p1.Ycurrent<1)
-				{
-					turn(1);
-					facing = plusY;
-				}
-				else
-				{
-					turn(3);
-					facing = minY;
-				}
-				break;
-				
-				case minY:
-				if(p1.Ycurrent<1)
-				{
-					turn(2);
-					facing = plusY;
-				}
-				else
-				{
-					turn(0);
-					facing = minY;
-				}
-				break;
-				
-				case plusX:
-				if(p1.Ycurrent<1)
-				{
-					turn(3);
-					facing = plusY;
-				}
-				else
-				{
-					turn(1);
-					facing = minY;
-				}
-				break;
-				
-				case plusY:
-				if(p1.Ycurrent<1)
-				{
-					turn(0);
-					facing = plusY;
-				}
-				else
-				{
-					turn(2);
-					facing = minY;
-				}
-				break;
-			}
+			turnToY(1,crossing);
 			
 			while(p1.Ycurrent!=1) //drive until the y coords is reached
 			{
@@ -505,60 +285,7 @@ void findPackageY()
 		
 		if(amount.amountOfZero>0)
 		{
-			switch(facing) //turn facing minus X
-			{
-				case minX:
-				if(p1.Ycurrent<0)
-				{
-					turn(1);
-					facing = plusY;
-				}
-				else
-				{
-					turn(3);
-					facing = minY;
-				}
-				break;
-				
-				case minY:
-				if(p1.Ycurrent<0)
-				{
-					turn(2);
-					facing = plusY;
-				}
-				else
-				{
-					turn(0);
-					facing = minY;
-				}
-				break;
-				
-				case plusX:
-				if(p1.Ycurrent<0)
-				{
-					turn(3);
-					facing = plusY;
-				}
-				else
-				{
-					turn(1);
-					facing = minY;
-				}
-				break;
-				
-				case plusY:
-				if(p1.Ycurrent<0)
-				{
-					turn(0);
-					facing = plusY;
-				}
-				else
-				{
-					turn(2);
-					facing = minY;
-				}
-				break;
-			}
+			turnToY(0,crossing);
 			
 			while(p1.Ycurrent!=0) //drive until the y coords is reached
 			{
@@ -610,13 +337,16 @@ void TurnBack()
 		facing=minY;
 		break;
 	}
-	while(crossing!=1 && crossing!=5 && crossing!=7)
+	if(p1.Ycurrent != 0)
 	{
-		crossing = 0;
-		followLine(&crossing, 0);
-		if(crossing != 0)
+		while(crossing!=1 && crossing!=5 && crossing!=7)
 		{
-			turn(0);
+			crossing = 0;
+			followLine(&crossing, 0);
+			if(crossing != 0)
+			{
+				turn(0);
+			}
 		}
 	}
 	turn(3);
@@ -628,5 +358,74 @@ void TurnBack()
 		{
 			turn(0);
 		}
+	}
+}
+
+void turnToY(int y,int ccrossing)
+{
+	switch(facing) //turn facing minus X
+	{
+		case minX:
+		if(p1.Ycurrent<y)
+		{
+			turn(1);
+			facing = plusY;
+		}
+		else
+		{
+			turn(3);
+			facing = minY;
+		}
+		break;
+		
+		case minY:
+		if(p1.Ycurrent<y)
+		{
+			turn(2);
+			facing = plusY;
+		}
+		else
+		{
+			turn(0);
+			facing = minY;
+		}
+		break;
+		
+		case plusX:
+		if(p1.Ycurrent<y)
+		{
+			turn(3);
+			facing = plusY;
+		}
+		else
+		{
+			turn(1);
+			facing = minY;
+		}
+		break;
+		
+		case plusY:
+		if(p1.Ycurrent<y)
+		{
+			turn(0);
+			facing = plusY;
+		}
+		else
+		{
+			if(ccrossing = 2)
+			{
+				turn(1);
+			}
+			else if(ccrossing = 3)
+			{
+				turn(3);
+			}
+			else
+			{
+				turn(2);
+			}
+			facing = minY;
+		}
+		break;
 	}
 }
