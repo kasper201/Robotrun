@@ -18,10 +18,17 @@ const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
 int detectObstacle()
 {
-	int proximity = analog_read(7);
+	int proximity = 0;
+	for(int i = 0; i < 4; i++){
+	proximity += analog_read(7);
 	print_long(proximity);
-	if(proximity >= 300)
-	return 1;
+	}
+	proximity = proximity/4;
+	if(proximity >= 350)
+	{
+		set_motors(0,0);
+		return 1;
+	}
 	else
 	{
 		return 0;
@@ -387,23 +394,3 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			set_motors(max, (max-power_difference));
 	}
 }
-// This is the main function and will be left out when done
-/*int main()
-{
-	int typeOfCrossing = 0;
-	int turnTo = 2;
-	int inMaze = 1;
-	initRobot();
-	
-	startDrivingAfter();
-	
-	while(1)
-	{
-		followLine(&typeOfCrossing, inMaze);
-		turn(turnTo);
-		set_motors(0,0);
-		wait_for_button_press(BUTTON_B);
-		wait_for_button_release(BUTTON_B);
-	}
-	
-}*/
