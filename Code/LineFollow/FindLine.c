@@ -16,31 +16,24 @@ const char startup_line2[] PROGMEM = "KARBONKE";
 const char startup_line3[] PROGMEM = " Floefs";
 const char StartupMelody[] PROGMEM = "T180 O5 MS L8 EERERCE4 L4 GR<GR ";
 
-/*
-void detectObstacle()
+int detectObstacle()
 {
-	unsigned char sensors[2] = {0};
-	const char help[] ={
-		1,
-		2,
-		3,
-		4,
-		5,
-		6,
-		7,
-		8,
-		9,
-		10
-	};
-	clear();
-	while(1)
+	int proximity = analog_read(7);
+	print_long(proximity);
+	if(proximity >= 300)
+	return 1;
+	else
 	{
-		sensors[1] = analog_read_millivolts(5);
-			print(sensors[]);
-			wait_for_button_press(BUTTON_B);
-			wait_for_button_release(BUTTON_B);
+		return 0;
 	}
-}*/
+}
+
+void initDistance()
+{
+	 DDRC  &= ~(1<< PORTC5);
+	 PORTC &= ~(1<< PORTC5);
+}
+
 
 void initRobot()
 {
@@ -60,9 +53,12 @@ void initRobot()
 	clear();
 	print("Press B");
 	wait_for_button_press(BUTTON_B);
-	clear();
+	lcd_goto_xy(0,1);
+	print_long(read_battery_millivolts_3pi()/50);
+	print("%");
 	wait_for_button_release(BUTTON_B);
 	play("T 180 MLCEG"); //play sound to display start of calibration
+	initDistance();
 	delay_ms(600);
 	//calibration
 	play("L4 MSD.D.D R8 ! O5 G2. R8" );
@@ -167,8 +163,18 @@ void followCharge(int *endPointReached)
 	unsigned int sensors[5];
 	int integral = 0;
 	int last_proportional = 0;
+	//int object = 0;
 	while(1)
 	{
+		int object = detectObstacle();
+		if(object != 0)
+		{
+			while(1){
+				set_motors(0,0);
+				play("G5");
+			}
+		}
+		
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
 		//up to and including line 153 is from the PID from pololu from page: https://www.pololu.com/docs/0J21/7.c
@@ -189,6 +195,7 @@ void followCharge(int *endPointReached)
 			*endPointReached = 1;
 			delay_ms(500);
 			turn(1);
+			delay_ms(600);
 			break;
 		}
 		else if(sensors[1] >= 750 || sensors[4] >= 750)
@@ -222,9 +229,18 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	unsigned char noCrossing = 1;
 	int integral = 0;
 	int last_proportional = 0;
+	int object;
 	
 	while(noCrossing)
 	{
+		object = detectObstacle();
+		if(object != 0)
+		{
+			set_motors(0,0);
+			play("A6");
+			*typeOfCrossing = 69;
+			break;
+		}
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
 		
@@ -354,7 +370,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 			noCrossing = 1;
 		}
 		
-		//this part is from the pololu site on page: https://www.pololu.com/docs/0J21/7.c
+		//this part is from the Pololu site on page: https://www.pololu.com/docs/0J21/7.c
 		int power_difference = proportional/20 + integral/10000 + derivative*3/2;
 		
 		// Compute the actual motor settings.  We never set either motor
