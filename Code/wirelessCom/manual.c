@@ -20,8 +20,8 @@ void floefsWakes()
 	switch(command)
 	{
 		case (char)0x34: //rechts
-		vooruit = 50;
-		achteruit = -50;
+		vooruit = 100;
+		achteruit = -100;
 		links = -50;
 		linksR = 50;
 		if(rechtsL != 150)
@@ -35,8 +35,8 @@ void floefsWakes()
 		
 		
 		case (char)0x33: //links
-		vooruit = 50;
-		achteruit = -50;
+		vooruit = 100;
+		achteruit = -100;
 		rechts = -50;
 		rechtsL = 50;
 		if(links != -150)
@@ -54,8 +54,8 @@ void floefsWakes()
 		rechtsL = 50;
 		links = -50;
 		linksR = 50;
-		vooruit = 50;
-		if(achteruit != -150)
+		vooruit = 100;
+		if(achteruit != -200)
 		{
 			achteruit--;
 			delay_ms(5);
@@ -69,8 +69,8 @@ void floefsWakes()
 		rechtsL = 50;
 		links = -50;
 		linksR = 50;
-		achteruit = -50;
-		if(vooruit != 150)
+		achteruit = -100;
+		if(vooruit != 200)
 		{
 			vooruit++;
 			delay_ms(5);
@@ -84,8 +84,8 @@ void floefsWakes()
 		rechtsL = 50;
 		links = -50;
 		linksR = 50;
-		achteruit = -50;
-		vooruit = 50;
+		achteruit = -100;
+		vooruit = 100;
 		set_motors(0,0);
 		break;
 		
