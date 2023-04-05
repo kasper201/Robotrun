@@ -1,3 +1,31 @@
+#include <pololu/3pi.h>
+#include "Charging.h"
+#include "MazeSolve.h"
+#include "FindLine.h"
+
+void chargeRoutine()
+{
+	delay_ms(100);
+	solveMaze();
+	int *ChargePoint = 0;
+	delay_ms(100);
+	passingToCharge();
+	delay_ms(100);
+	followCharge(ChargePoint);
+	timeToCharge();
+	delay_ms(100);
+	passingToCharge2();
+	delay_ms(100);
+	solveMaze();
+	delay_ms(100);
+	followLine(0,0);
+	set_motors(0,0);
+	turn(1);
+	followLine(0,0);
+	set_motors(0,0);
+	delay_ms(100);
+}
+
 void passingToCharge()
 {
 	int crossing=0;
@@ -43,13 +71,13 @@ void batteryRead( unsigned int *percentage)
 {
 	int average;
 	
-	print_long(voltage);
 	for(int i = 0; i < 10; i++)
 	{
 		unsigned int voltage = read_battery_millivolts_3pi();
 		average += voltage;
 	}
-	*percentage = (read_battery_millivolts_3pi()/50);
+	*percentage = average % 10;
+	*percentage = ((*percentage/50));
 }
 
 void timeToCharge()
