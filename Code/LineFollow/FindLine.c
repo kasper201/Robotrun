@@ -9,6 +9,7 @@ Further more the code will output the thickness of the line and maybe sensors 6 
 #include <avr/pgmspace.h>
 #include <pololu/PololuQTRSensors.h>
 #include "FindLine.h"
+#include "charging.h"
 
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
@@ -24,7 +25,7 @@ int detectObstacle()
 	print_long(proximity);
 	}
 	proximity = proximity/4;
-	if(proximity >= 350)
+	if(proximity >= 400)
 	{
 		set_motors(0,0);
 		return 1;
@@ -44,6 +45,7 @@ void initDistance()
 
 void initRobot()
 {
+	unsigned int percentage;
 	pololu_3pi_init(2000);
 	
 	//play welcome line
@@ -61,7 +63,8 @@ void initRobot()
 	print("Press B");
 	wait_for_button_press(BUTTON_B);
 	lcd_goto_xy(0,1);
-	print_long(read_battery_millivolts_3pi()/50);
+	batteryRead(&percentage);
+	print_long(percentage);
 	print("%");
 	wait_for_button_release(BUTTON_B);
 	play("T 180 MLCEG"); //play sound to display start of calibration
@@ -170,15 +173,16 @@ void followCharge(int *endPointReached)
 	unsigned int sensors[5];
 	int integral = 0;
 	int last_proportional = 0;
-	//int object = 0;
 	while(1)
 	{
 		int object = detectObstacle();
 		if(object != 0)
 		{
-			while(1){
+			while(object){
 				set_motors(0,0);
 				play("G5");
+				delay_ms(2500);
+				object = detectObstacle();
 			}
 		}
 		
@@ -240,13 +244,15 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(noCrossing)
 	{
-		object = detectObstacle();
+		int object = detectObstacle();
 		if(object != 0)
 		{
-			set_motors(0,0);
-			play("A6");
-			*typeOfCrossing = 69;
-			break;
+			while(object){
+				set_motors(0,0);
+				play("G5");
+				delay_ms(2500);
+				object = detectObstacle();
+			}
 		}
 		clear();
 		unsigned int position = read_line(sensors,IR_EMITTERS_ON); // read all IR_EMITTERS into sensors array each sensor has a value between 0 and 1000 the bigger the number the less reflective
