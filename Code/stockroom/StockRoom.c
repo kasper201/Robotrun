@@ -7,20 +7,34 @@ struct am amount;
 
 void stockroomRoutine()
 {
+	delay_ms(100);
+	solveMaze();
+	delay_ms(100);
+	
 	int crossing = 0;
-	facing = minX;
+	facing = minY;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
+	
 	followLine(&crossing, 0);
 	crossing = 0;
+	
+	clear();
+	print("calcul");
+	lcd_goto_xy(0,1);
+	print("ating");
+	play("o5 c#" );
+	delay_ms(1000);
+	
 	while(o1.packageAmount!=0)//there are still orders to be completed
 	{
 		clear();
-		print("order");
+		print("start.");
 		lcd_goto_xy(0,1);
-		print("reached");
+		print(";)");
 		play("o5 c#" );
-		delay_ms(30000);
+		delay_ms(500);
+		clear();
 		switch(facing) //turn facing minus X if not
 		{
 			case minY:
@@ -36,7 +50,6 @@ void stockroomRoutine()
 			facing = minX;
 			break;
 		}
-		
 		nextRound(); //decides witch packages are next
 		findPackageX(); //go to the X
 		findPackageY();	//get all the packages on this X
@@ -46,7 +59,16 @@ void stockroomRoutine()
 		amount.amountOfTwo = 0;
 		amount.amountOfThree = 0;
 	}
-	//TurnBack();//drive back to the maze
+	TurnBack();//drive back to the maze
+	delay_ms(100);
+	solveMaze();
+	delay_ms(100);
+	followLine(0,0);
+	set_motors(0,0);
+	turn(1);
+	followLine(0,0);
+	set_motors(0,0);
+	delay_ms(100);
 }
 
 void nextRound()
@@ -172,6 +194,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			o1.packageAmount--;
 		}
 		
 		
@@ -245,6 +268,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			o1.packageAmount--;
 		}
 		
 		
@@ -318,6 +342,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			o1.packageAmount--;
 		}
 		
 		
@@ -391,6 +416,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			o1.packageAmount--;
 		}
 	}
 }
