@@ -18,7 +18,6 @@
 #include "MazeSolve.h"
 
 char arrayToStockroom[128] = {0};
-char arrayFromStockroom[128] = {0};
 
 
 void toStockRoom()
@@ -37,6 +36,11 @@ void toStockRoom()
 		{
 			break;
 		}
+		else if(check == 69)
+		{
+			set_motors(0,0);
+			delay_ms(1000);
+		}
 		i++;
 	}
 }
@@ -48,14 +52,17 @@ void fromStockRoom()
 	while(1)
 	{
 		followLine(&check,1);
-		turn(arrayFromStockroom[i]);
-		if(check == 7)
+		if(check == 2)
+		{
+			turn(0);
+		}
+		else if(check == 7)
 		{
 			break;
 		}
-		else if(check == 99)
+		else
 		{
-			break;
+			turn(1);
 		}
 		i++;
 	}
@@ -72,25 +79,6 @@ void routeKnown(int *ToStockRoom)
 	{
 		fromStockRoom();
 		*ToStockRoom = 1;
-	}
-}
-
-void convertArray(int arrayLength)
-{
-	for(int i = arrayLength; i > 0; i--)
-	{
-		if(arrayToStockroom[i] == 3)
-		{
-			arrayFromStockroom[arrayLength-i] = 1;
-		}
-		else if(arrayToStockroom[i] == 1)
-		{
-			arrayFromStockroom[arrayLength-i] = 3;
-		}
-		else
-		{
-			arrayFromStockroom[i] = 0;
-		}
 	}
 }
 
@@ -132,7 +120,9 @@ void solveMaze(int *mazeLocation)
 	int inMaze = 1;
 	static int irouteKnown = 0;
 	static int i = 0;
-		
+	
+	*mazeLocation = stockroom;
+	
 	if(irouteKnown == 1)
 	{
 		routeKnown(&stockroom);
@@ -174,9 +164,6 @@ void solveMaze(int *mazeLocation)
 			i++;
 			simplify(crossing, &i);		
 		}
-		size_t size = sizeof(arrayToStockroom) / sizeof(arrayToStockroom[0]);
-		stockroom = 1;
-		convertArray(size);
 		irouteKnown = 1;
 	}	
 	*mazeLocation = stockroom;
