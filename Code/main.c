@@ -11,12 +11,14 @@
 #include "StockRoom.h"
 #include "MazeSolve.h"
 #include "Charging.h"
+#include "ComRead.h"
 #include <pololu/3pi.h>
+
+enum STATE{init, maze, stockroom, charge, manual, home, lost};
+enum STATE cSTATE = init;
 
 int main()
 {
-	enum STATE{init, maze, stockroom, charge, manual, home, lost};
-	enum STATE cSTATE = init;
 	int percentage = 100;
 
 	switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
@@ -24,14 +26,18 @@ int main()
 		case init: //init state
 		clear();
 		initRobot();
+		ComCheck();
 		followLine(0,0);
+		ComCheck();
 		cSTATE = home;
 		break;
 		
 		
 		case maze: //maze state
 		;int backOrNot;
+		ComCheck();
 		solveMaze(&backOrNot);
+		ComCheck();
 		if(backOrNot == 1)
 		{
 			cSTATE = stockroom;
@@ -44,7 +50,9 @@ int main()
 		
 		
 		case stockroom: //stockroom state
+		ComCheck();
 		stockroomRoutine();
+		ComCheck();
 		set_motors(50, 50);
 		delay_ms(100);
 		cSTATE = maze;
@@ -52,12 +60,18 @@ int main()
 		
 		
 		case charge: //charge state
+		ComCheck();
 		solveMaze(0);
+		ComCheck();
 		int *ChargePoint = 0;
 		passingToCharge();
+		ComCheck();
 		followCharge(ChargePoint);
+		ComCheck();
 		timeToCharge();
+		ComCheck();
 		passingToCharge2();
+		ComCheck();
 		solveMaze(0);
 		cSTATE = home;
 		break;
@@ -71,6 +85,7 @@ int main()
 		
 		case home: //home state
 		clear();
+		ComCheck();
 		print("FLOEFS");
 		lcd_goto_xy(0,1);
 		print("WAKES");
