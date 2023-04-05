@@ -79,13 +79,13 @@ void convertArray(int arrayLength)
 {
 	for(int i = arrayLength; i > 0; i--)
 	{
-		if(arrayToStockroom[arrayLength-i] == 3)
+		if(arrayToStockroom[i] == 3)
 		{
-			arrayFromStockroom[i] = 1;
+			arrayFromStockroom[arrayLength-i] = 1;
 		}
-		else if(arrayToStockroom[arrayLength-i] == 1)
+		else if(arrayToStockroom[i] == 1)
 		{
-			arrayFromStockroom[i] = 3;
+			arrayFromStockroom[arrayLength-i] = 3;
 		}
 		else
 		{
@@ -127,6 +127,7 @@ void simplify(int crossing, int *pathLength)
 
 void solveMaze(int *mazeLocation)
 {
+	*mazeLocation %= 2;
 	static int stockroom = 0;
 	int inMaze = 1;
 	static int irouteKnown = 0;
@@ -160,6 +161,11 @@ void solveMaze(int *mazeLocation)
 				turn(1);
 				delay_ms(20);
 				arrayToStockroom[i] = 2;
+			}
+			else if(crossing == 69)
+			{
+				*mazeLocation += 2;
+				break;
 			}
 			else
 			{
