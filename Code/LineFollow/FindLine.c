@@ -10,6 +10,7 @@ Further more the code will output the thickness of the line and maybe sensors 6 
 #include <pololu/PololuQTRSensors.h>
 #include "FindLine.h"
 #include "charging.h"
+#include "OrderRecieve.h"
 
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
@@ -143,6 +144,7 @@ void turn(int turnTo)
 			{
 				set_motors(-75, 75);
 			}
+			recieveOrderToBreak();
 			delay_ms(150);
 			read_line(sensors, IR_EMITTERS_ON);
 			if(sensors[2] <= 250)
@@ -151,6 +153,7 @@ void turn(int turnTo)
 				if(turnTo == 2)
 				{
 					delay_ms(150);
+					recieveOrderToBreak();
 					checkReachedTurn();
 					set_motors(0,0);
 				}
@@ -175,6 +178,7 @@ void followCharge(int *endPointReached)
 	int last_proportional = 0;
 	while(1)
 	{
+		recieveOrderToBreak();
 		int object = detectObstacle();
 		if(object != 0)
 		{
@@ -244,7 +248,8 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(noCrossing)
 	{
-		int object = detectObstacle();
+		recieveOrderToBreak();
+		object = detectObstacle();
 		if(object != 0)
 		{
 			while(object){
