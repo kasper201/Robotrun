@@ -24,9 +24,9 @@ void stockroomRoutine()
 	amount.amountOfZero = 0;
 	amount.amountOfOne = 0;
 	amount.amountOfTwo = 1;
-	amount.amountOfThree = 0;
+	amount.amountOfThree = 1;
 	amount.amountOfFour = 0;
-	p1.amountOfX = 1;
+	p1.amountOfX = 3;
 	
 	clear();
 	print("calcul");
@@ -125,7 +125,7 @@ void nextRound()
 void findPackageX()
 {
 	int crossing = 0;
-	while(p1.Xcurrent<p1.Xpackage && p1.Xcurrent!=p1.Xpackage) //drive until the X coords is reached
+	while(p1.Xcurrent!=p1.Xpackage) //drive until the X coords is reached
 	{
 		crossing = 0;
 		followLine(&crossing, 0);
@@ -142,6 +142,8 @@ void findPackageY()
 	int crossing = 0;
 	while(p1.amountOfX != 0)
 	{
+		delay_ms(500);
+		
 		if(amount.amountOfFour>0)
 		{
 			switch(facing) //turn facing minus X
@@ -150,50 +152,55 @@ void findPackageY()
 				if(p1.Ycurrent<4)
 				{
 					turn(1);
+					facing = plusY;
 				}
 				else
 				{
 					turn(3);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case minY:
 				if(p1.Ycurrent<4)
 				{
 					turn(2);
+					facing = plusY;
 				}
 				else
 				{
 					turn(0);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusX:
 				if(p1.Ycurrent<4)
 				{
 					turn(3);
+					facing = plusY;
 				}
 				else
 				{
 					turn(1);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusY:
 				if(p1.Ycurrent<4)
 				{
 					turn(0);
+					facing = plusY;
 				}
 				else
 				{
 					turn(2);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 			}
+			
 			while(p1.Ycurrent<=4) //drive until the y coords is reached
 			{
 				crossing = 0;
@@ -206,7 +213,7 @@ void findPackageY()
 				{
 					p1.Ycurrent++;
 				}
-				else if(facing == minY)
+				if(facing == minY)
 				{
 					p1.Ycurrent--;
 				}
@@ -218,6 +225,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			p1.Ycurrent = 4;
 			o1.packageAmount--;
 			p1.amountOfX--;
 		}
@@ -230,48 +238,52 @@ void findPackageY()
 				if(p1.Ycurrent<3)
 				{
 					turn(1);
+					facing = plusY;
 				}
 				else
 				{
 					turn(3);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case minY:
 				if(p1.Ycurrent<3)
 				{
 					turn(2);
+					facing = plusY;
 				}
 				else
 				{
 					turn(0);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusX:
 				if(p1.Ycurrent<3)
 				{
 					turn(3);
+					facing = plusY;
 				}
 				else
 				{
 					turn(1);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusY:
 				if(p1.Ycurrent<3)
 				{
 					turn(0);
+					facing = plusY;
 				}
 				else
 				{
 					turn(2);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 			}
 			
@@ -287,7 +299,7 @@ void findPackageY()
 				{
 					p1.Ycurrent++;
 				}
-				else if(facing == minY)
+				if(facing == minY)
 				{
 					p1.Ycurrent--;
 				}
@@ -300,6 +312,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			p1.Ycurrent = 3;
 			o1.packageAmount--;
 			p1.amountOfX--;
 		}
@@ -313,48 +326,52 @@ void findPackageY()
 				if(p1.Ycurrent<2)
 				{
 					turn(1);
+					facing = plusY;
 				}
 				else
 				{
 					turn(3);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case minY:
 				if(p1.Ycurrent<2)
 				{
 					turn(2);
+					facing = plusY;
 				}
 				else
 				{
 					turn(0);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusX:
 				if(p1.Ycurrent<2)
 				{
 					turn(3);
+					facing = plusY;
 				}
 				else
 				{
 					turn(1);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusY:
 				if(p1.Ycurrent<2)
 				{
 					turn(0);
+					facing = plusY;
 				}
 				else
 				{
 					turn(2);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 			}
 			
@@ -383,6 +400,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			p1.Ycurrent = 2;
 			o1.packageAmount--;
 			p1.amountOfX--;
 		}
@@ -396,48 +414,52 @@ void findPackageY()
 				if(p1.Ycurrent<1)
 				{
 					turn(1);
+					facing = plusY;
 				}
 				else
 				{
 					turn(3);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case minY:
 				if(p1.Ycurrent<1)
 				{
 					turn(2);
+					facing = plusY;
 				}
 				else
 				{
 					turn(0);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusX:
 				if(p1.Ycurrent<1)
 				{
 					turn(3);
+					facing = plusY;
 				}
 				else
 				{
 					turn(1);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusY:
 				if(p1.Ycurrent<1)
 				{
 					turn(0);
+					facing = plusY;
 				}
 				else
 				{
 					turn(2);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 			}
 			
@@ -453,7 +475,7 @@ void findPackageY()
 				{
 					p1.Ycurrent++;
 				}
-				else if(facing == minY)
+				if(facing == minY)
 				{
 					p1.Ycurrent--;
 				}
@@ -466,6 +488,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			p1.Ycurrent = 1;
 			o1.packageAmount--;
 			p1.amountOfX--;
 		}
@@ -479,48 +502,52 @@ void findPackageY()
 				if(p1.Ycurrent<0)
 				{
 					turn(1);
+					facing = plusY;
 				}
 				else
 				{
 					turn(3);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case minY:
 				if(p1.Ycurrent<0)
 				{
 					turn(2);
+					facing = plusY;
 				}
 				else
 				{
 					turn(0);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusX:
 				if(p1.Ycurrent<0)
 				{
 					turn(3);
+					facing = plusY;
 				}
 				else
 				{
 					turn(1);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 				
 				case plusY:
 				if(p1.Ycurrent<0)
 				{
 					turn(0);
+					facing = plusY;
 				}
 				else
 				{
 					turn(2);
+					facing = minY;
 				}
-				facing = plusY;
 				break;
 			}
 			
@@ -536,7 +563,7 @@ void findPackageY()
 				{
 					p1.Ycurrent++;
 				}
-				else if(facing == minY)
+				if(facing == minY)
 				{
 					p1.Ycurrent--;
 				}
@@ -549,6 +576,7 @@ void findPackageY()
 			print("reached");
 			play("o5 c#" );
 			delay_ms(300);
+			p1.Ycurrent = 0;
 			o1.packageAmount--;
 			p1.amountOfX--;
 		}
