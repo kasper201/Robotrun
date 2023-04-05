@@ -10,7 +10,9 @@ void floefsWakes()
 	
 	int vooruit;
 	int rechts;
+	int rechtsL;
 	int links;
+	int linksR;
 	int achteruit;
 	
 	char command = read_next_byte();
@@ -18,33 +20,41 @@ void floefsWakes()
 	switch(command)
 	{
 		case (char)0x34: //rechts
-		rechts = -50;
-		links = 50;
-		if(links != 150)
+		vooruit = 50;
+		achteruit = -50;
+		links = -50;
+		linksR = 50;
+		if(rechtsL != 150)
 		{
 			rechts--;
-			links++;
+			rechtsL++;
 			delay_ms(5);
 		}
-		set_motors(links,rechts);
+		set_motors(rechtsL,rechts);
 		break;
 		
 		
 		case (char)0x33: //links
-		rechts = 50;
-		links = -50;
+		vooruit = 50;
+		achteruit = -50;
+		rechts = -50;
+		rechtsL = 50;
 		if(links != -150)
 		{
-			rechts++;
+			linksR++;
 			links--;
 			delay_ms(5);
 		}
-		set_motors(links,rechts);
+		set_motors(links,linksR);
 		break;
 		
 		
 		case (char)0x32: //achteruit
-		achteruit = -50;
+		rechts = -50;
+		rechtsL = 50;
+		links = -50;
+		linksR = 50;
+		vooruit = 50;
 		if(achteruit != -150)
 		{
 			achteruit--;
@@ -55,7 +65,11 @@ void floefsWakes()
 		
 		
 		case (char)0x31: //vooruit
-		vooruit = 50;
+		rechts = -50;
+		rechtsL = 50;
+		links = -50;
+		linksR = 50;
+		achteruit = -50;
 		if(vooruit != 150)
 		{
 			vooruit++;
@@ -66,10 +80,12 @@ void floefsWakes()
 		
 		
 		case (char)0x35: //geen knop
-		rechts = 0;
-		links = 0;
-		vooruit = 0;
-		achteruit = 0;
+		rechts = -50;
+		rechtsL = 50;
+		links = -50;
+		linksR = 50;
+		achteruit = -50;
+		vooruit = 50;
 		set_motors(0,0);
 		break;
 		
@@ -79,6 +95,6 @@ void floefsWakes()
 		lcd_goto_xy(0,1);
 		print_hex_byte(command);
 		play("o7l16crc");
-		continue; // bad command
+		break; // bad command
 	}
 }
