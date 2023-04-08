@@ -71,6 +71,10 @@ void receiveOrder() // receive order in integer form
 	}
 	
 	o1.packageAmount = orderAmount;
+	print("re-");
+	lcd_goto_xy(0,1);
+	print("ceived");
+	delay_ms(1000);
 }
 
 void receiveOrderToBreak()
