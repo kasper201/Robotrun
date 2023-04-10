@@ -29,6 +29,8 @@ int main()
 	{
 		int percentage = 70;
 		
+		cSTATE = getOrder();
+		
 		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
 		{
 			case init: //init state
