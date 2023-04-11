@@ -75,6 +75,7 @@ void receiveOrder() // receive order in integer form
 	lcd_goto_xy(0,1);
 	print("ceived");
 	delay_ms(1000);
+	clear();
 }
 
 void receiveOrderToBreak()
