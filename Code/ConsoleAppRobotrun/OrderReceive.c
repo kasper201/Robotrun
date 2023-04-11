@@ -7,7 +7,6 @@ char buffer[100];
 
 int getOrder() // get order from wixel
 {
-	pololu_3pi_init(2000);
 	play_mode(PLAY_CHECK);
 	clear();
 
@@ -80,8 +79,6 @@ void receiveOrder() // receive order in integer form
 
 void receiveOrderToBreak()
 {
-	
-	pololu_3pi_init(2000);
 	play_mode(PLAY_CHECK);
 	clear();
 
