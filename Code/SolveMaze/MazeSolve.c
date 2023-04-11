@@ -91,20 +91,7 @@ void simplify(int crossing, int *pathLength)
 	int totalTurn = 0;
 	for(i = 1; i <= 3; i++)
 	{
-		switch(arrayToStockroom[*pathLength-i])
-		{			
-			case 1:
-			totalTurn += 1;
-			break;
-			
-			case 3:
-			totalTurn += 3;
-			break;
-			
-			case 2:
-			totalTurn += 2;
-			break;
-		}
+		totalTurn += arrayToStockroom[*pathLength-i];
 	}
 	totalTurn %= 4;
 	
