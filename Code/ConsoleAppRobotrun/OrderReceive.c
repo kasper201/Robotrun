@@ -103,5 +103,4 @@ void receiveOrderToBreak()
 	{
 		//just continue if stop button is not pressed
 	}
-	receiveOrder();
 }
