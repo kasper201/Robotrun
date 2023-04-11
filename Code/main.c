@@ -19,54 +19,33 @@ enum STATE cSTATE = init;
 
 int main()
 {
-	char buffer[100];
-	pololu_3pi_init(2000);
-	play_mode(PLAY_CHECK);
-	serial_set_baud_rate(9600);
-	serial_receive_ring(buffer, 100);
-
+	int percentage = 80;
 	while(1)
 	{
-		int percentage = 70;
-		
-		cSTATE = getOrder();
-		
-		switch(cSTATE)  // alle cSTATE staan er al maar de rest van je case dien je zelf nog aan te vullen en je zult if/else statments moeten gaan maken voor de cSTATE
+		switch(cSTATE)
 		{
 			case init: //init state
 			clear();
 			initRobot();
 			delay_ms(100);
-			followLine(0,0);
-			set_motors(0,0);
-			cSTATE = home;
-			break;
-			
-			case stockroom: //stockroom state
-			stockroomRoutine();
-			cSTATE = home;
-			break;
-			
-			
-			case charge: //charge state
-			chargeRoutine();
-			cSTATE = home;
-			break;
-			
-			
-			case manual: //manual state
-			//floefsWakes();
-			cSTATE = init;
-			break;
-			
-			
-			case home: //home state
 			clear();
 			print("FLOEFS");
 			lcd_goto_xy(0,1);
 			print("WAKES");
+			delay_ms(100);
+			followLine(0,0);
+			set_motors(0,0);
+			delay_ms(100);
+			cSTATE = home;
+			break;
+			
+			case home: // the state when it has no orders yet
+			clear();
+			print("FLOEFS");
+			lcd_goto_xy(0,1);
+			print("HOME");
 			delay_ms(500);
-			saveMe();
+			receiveOrder();
 			if(percentage<60)
 			{
 				cSTATE = charge;
@@ -77,6 +56,20 @@ int main()
 			}
 			break;
 			
+			case stockroom:
+			stockroomRoutine();
+			cSTATE = home;
+			break;
+			
+			case charge:
+			chargeRoutine();
+			cSTATE = home;
+			break;
+			
+			case manual: //manual state
+			drive();
+			cSTATE = init;
+			break;
 			
 			case lost: //lost state
 			clear();
@@ -85,12 +78,12 @@ int main()
 			print("FLOEFS");
 			play("o5 c#" );
 			delay_ms(300);
-			if(1==2)
-			{
-				cSTATE = manual;
-			}
+			cSTATE = manual;
+			break;
+			
+			default:
+			spin();
 			break;
 		}
 	}
-	return 0;
 }
