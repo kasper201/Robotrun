@@ -1,7 +1,12 @@
-#include <pololu/3pi.h>
-#include "Charging.h"
-#include "MazeSolve.h"
 #include "FindLine.h"
+#include "StockRoom.h"
+#include "MazeSolve.h"
+#include "Charging.h"
+#include "ComRead.h"
+#include "ManualDrive.h"
+#include <pololu/3pi.h>
+#include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 
 void chargeRoutine()
 {
