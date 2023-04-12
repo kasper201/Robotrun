@@ -1,16 +1,12 @@
-/*
-All code with is original except for the PID control. The PID control is from Pololu themselves and can be found at: https://www.pololu.com/docs/0J21/7.c
-
-The code will output if the left sensor found a line and if the right sensor has found a line, this will most likely be done using pointers making them necessary for the input aswell.
-Further more the code will output the thickness of the line and maybe sensors 6 and 7 for object detection
-*/
-
+#include "FindLine.h"
+#include "StockRoom.h"
+#include "MazeSolve.h"
+#include "Charging.h"
+#include "ComRead.h"
+#include "ManualDrive.h"
 #include <pololu/3pi.h>
 #include <avr/pgmspace.h>
 #include <pololu/PololuQTRSensors.h>
-#include "FindLine.h"
-#include "charging.h"
-#include "OrderRecieve.h"
 
 //the startup screen
 const char startup_line1[] PROGMEM = "RobotRun";
@@ -22,8 +18,8 @@ int detectObstacle()
 {
 	int proximity = 0;
 	for(int i = 0; i < 4; i++){
-	proximity += analog_read(7);
-	print_long(proximity);
+		proximity += analog_read(7);
+		print_long(proximity);
 	}
 	proximity = proximity/4;
 	if(proximity >= 400)
@@ -39,8 +35,8 @@ int detectObstacle()
 
 void initDistance()
 {
-	 DDRC  &= ~(1<< PORTC5);
-	 PORTC &= ~(1<< PORTC5);
+	DDRC  &= ~(1<< PORTC5);
+	PORTC &= ~(1<< PORTC5);
 }
 
 
@@ -144,7 +140,7 @@ void turn(int turnTo)
 			{
 				set_motors(-75, 75);
 			}
-			recieveOrderToBreak();
+		//	recieveOrderToBreak();
 			delay_ms(150);
 			read_line(sensors, IR_EMITTERS_ON);
 			if(sensors[2] <= 250)
@@ -153,7 +149,7 @@ void turn(int turnTo)
 				if(turnTo == 2)
 				{
 					delay_ms(150);
-					recieveOrderToBreak();
+					//recieveOrderToBreak();
 					checkReachedTurn();
 					set_motors(0,0);
 				}
@@ -178,7 +174,7 @@ void followCharge(int *endPointReached)
 	int last_proportional = 0;
 	while(1)
 	{
-		recieveOrderToBreak();
+	//	recieveOrderToBreak();
 		int object = detectObstacle();
 		if(object != 0)
 		{
@@ -248,7 +244,7 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 	
 	while(noCrossing)
 	{
-		recieveOrderToBreak();
+	//	recieveOrderToBreak();
 		object = detectObstacle();
 		if(object != 0)
 		{
@@ -395,14 +391,14 @@ void followLine(int *typeOfCrossing, int inMaze) //0 if no crossing 99 if off of
 		// to a negative value.
 		const int max = 90;
 		if(power_difference > max)
-			power_difference = max;
+		power_difference = max;
 		if(power_difference < -max)
-			power_difference = -max;
+		power_difference = -max;
 		
 		if(power_difference < 0)
-			set_motors((max+power_difference), max);
+		set_motors((max+power_difference), max);
 		else
-			set_motors(max, (max-power_difference));
+		set_motors(max, (max-power_difference));
 	}
 	set_motors(0,0);
 }
