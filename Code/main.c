@@ -8,7 +8,7 @@
 #include <avr/pgmspace.h>
 #include <pololu/PololuQTRSensors.h>
 
-enum STATE{init, stockroom, charge, manual, home, lost};
+enum STATE{init, stockroom, charge, manual, home, lost, eBrake};
 enum STATE cSTATE = init;
 
 int main()
@@ -26,7 +26,7 @@ int main()
 			print("FLOEFS");
 			lcd_goto_xy(0,1);
 			print("WAKES");
-			delay_ms(100);
+			delay_ms(1000);
 			followLine(0,0);
 			set_motors(0,0);
 			delay_ms(100);
@@ -61,15 +61,30 @@ int main()
 			break;
 			
 			case manual: //manual state
+			clear();
+			print("FLOEFS");
+			lcd_goto_xy(0,1);
+			print("MANUAL");
+			play("o5 c#" );
 			drive();
 			cSTATE = init;
 			break;
 			
 			case lost: //lost state
 			clear();
-			print("HELP|:(");
-			lcd_goto_xy(0,1);
 			print("FLOEFS");
+			lcd_goto_xy(0,1);
+			print("LOST");
+			play("o5 c#" );
+			delay_ms(300);
+			cSTATE = manual;
+			break;
+			
+			case eBrake: //emergency brake state
+			clear();
+			print("FLOEFS");
+			lcd_goto_xy(0,1);
+			print("BRAKE");
 			play("o5 c#" );
 			delay_ms(300);
 			cSTATE = manual;
