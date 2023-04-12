@@ -7,11 +7,10 @@ void chargeRoutine()
 {
 	delay_ms(100);
 	solveMaze();
-	int *ChargePoint = 0;
 	delay_ms(100);
 	passingToCharge();
 	delay_ms(100);
-	followCharge(ChargePoint);
+	followCharge(0);
 	timeToCharge();
 	delay_ms(100);
 	passingToCharge2();
