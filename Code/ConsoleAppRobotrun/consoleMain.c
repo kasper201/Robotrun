@@ -11,6 +11,7 @@
 #include "sendOrders.h"
 #include "serialReceive.c"
 
+// parts of this code are copied from the internet. These are opensource codes and are from: https://www.codeincodeblock.com/2011/03/move-console-windows-using-codeblock.html
 
 HWND WINAPI GetConsoleWindowNT(void)
 {
