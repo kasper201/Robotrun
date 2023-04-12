@@ -11,23 +11,23 @@ struct am amount;
 
 void stockroomRoutine()
 {
-	int crossing = 0;
-	delay_ms(100);
 	solveMaze();
+	delay_ms(100);
+	int crossing = 0;
 	delay_ms(100);
 	followLine(&crossing, 0);
 	crossing = 0;
-	
+
 	facing = minX;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
 	p1.Xpackage = 0;
-	amount.amountOfZero = 1;
+	amount.amountOfZero = 0;
 	amount.amountOfOne = 0;
 	amount.amountOfTwo = 0;
-	amount.amountOfThree = 1;
+	amount.amountOfThree = 0;
 	amount.amountOfFour = 0;
-	p1.amountOfX = 2;
+	p1.amountOfX = 0;
 	
 	clear();
 	print("calcul");
@@ -43,7 +43,7 @@ void stockroomRoutine()
 		lcd_goto_xy(0,1);
 		print(";)");
 		play("o5 c#" );
-		delay_ms(500);
+		delay_ms(200);
 		clear();
 		switch(facing) //turn facing minus X if not
 		{
@@ -60,21 +60,18 @@ void stockroomRoutine()
 			facing = minX;
 			break;
 		}
-		//nextRound(); //decides witch packages are next
+		nextRound(); //decides witch packages are next
+		clear();
+		print_long(p1.Xpackage);
 		findPackageX(); //go to the X
 		delay_ms(500);
 		findPackageY();	//get all the packages on this X
-		
-		amount.amountOfZero = 0;
-		amount.amountOfOne = 0;
-		amount.amountOfTwo = 0;
-		amount.amountOfThree = 0;
-		amount.amountOfFour = 0;
 	}
 	TurnBack();//drive back to the maze
 	delay_ms(100);
 	solveMaze();
 	delay_ms(100);
+	
 	followLine(0,0);
 	set_motors(0,0);
 	turn(1);
@@ -86,9 +83,17 @@ void stockroomRoutine()
 void nextRound()
 {
 	p1.Xpackage = 0;
-	while(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
+	p1.amountOfX = 0;
+	amount.amountOfZero = 0;
+	amount.amountOfOne = 0;
+	amount.amountOfTwo = 0;
+	amount.amountOfThree = 0;
+	amount.amountOfFour = 0;
+	
+	while(p1.amountOfX==0)
 	{
-		for(int teller=0; teller<32; teller++)
+		
+		for(int teller=0; teller<o1.packageAmount; teller++)
 		{
 			if(o1.Xorders[teller]==p1.Xpackage)
 			{
@@ -96,23 +101,29 @@ void nextRound()
 				{
 					case 0:
 					amount.amountOfZero++;
+					p1.amountOfX++;
 					break;
 					case 1:
 					amount.amountOfOne++;
+					p1.amountOfX++;
 					break;
 					case 2:
 					amount.amountOfTwo++;
+					p1.amountOfX++;
 					break;
 					case 3:
 					amount.amountOfThree++;
+					p1.amountOfX++;
 					break;
 					case 4:
 					amount.amountOfFour++;
+					p1.amountOfX++;
 					break;
 				}
 			}
 		}
-		if(amount.amountOfZero==0 && amount.amountOfOne==0 && amount.amountOfTwo==0 && amount.amountOfThree==0 && amount.amountOfFour==0)
+		
+		if(p1.amountOfX==0)
 		{
 			p1.Xpackage++;
 		}
@@ -172,7 +183,7 @@ void findPackageY()
 			lcd_goto_xy(0,1);
 			print("reached");
 			play("o5 c#" );
-			delay_ms(300);
+			delay_ms(1000);
 			p1.Ycurrent = 4;
 			o1.packageAmount--;
 			p1.amountOfX--;
@@ -206,7 +217,7 @@ void findPackageY()
 			lcd_goto_xy(0,1);
 			print("reached");
 			play("o5 c#" );
-			delay_ms(300);
+			delay_ms(1000);
 			p1.Ycurrent = 3;
 			o1.packageAmount--;
 			p1.amountOfX--;
@@ -241,7 +252,7 @@ void findPackageY()
 			lcd_goto_xy(0,1);
 			print("reached");
 			play("o5 c#" );
-			delay_ms(300);
+			delay_ms(1000);
 			p1.Ycurrent = 2;
 			o1.packageAmount--;
 			p1.amountOfX--;
@@ -276,7 +287,7 @@ void findPackageY()
 			lcd_goto_xy(0,1);
 			print("reached");
 			play("o5 c#" );
-			delay_ms(300);
+			delay_ms(1000);
 			p1.Ycurrent = 1;
 			o1.packageAmount--;
 			p1.amountOfX--;
@@ -311,7 +322,7 @@ void findPackageY()
 			lcd_goto_xy(0,1);
 			print("reached");
 			play("o5 c#" );
-			delay_ms(300);
+			delay_ms(1000);
 			p1.Ycurrent = 0;
 			o1.packageAmount--;
 			p1.amountOfX--;
