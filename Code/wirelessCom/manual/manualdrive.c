@@ -1,5 +1,12 @@
+#include "FindLine.h"
+#include "StockRoom.h"
+#include "MazeSolve.h"
+#include "Charging.h"
+#include "ComRead.h"
+#include "ManualDrive.h"
 #include <pololu/3pi.h>
-#include "manual.h"
+#include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 
 char buffer[100];
 
@@ -9,9 +16,8 @@ void drive()
 	pololu_3pi_init(2000);
 	play_mode(PLAY_CHECK);
 	clear();
-
-	// start receiving data at 115.2 kbaud
-	serial_set_baud_rate(9600);
+	
+	serial_set_baud_rate(9600);  // start receiving data at 115.2 kbaud
 	serial_receive_ring(buffer, 100);
 	
 	int vooruit = 100;
@@ -24,9 +30,9 @@ void drive()
 	
 	while(escaped == 0)
 	{
-		read_next_byte();
+		readNextByte();
 		delay_us(1);
-		char command = read_next_byte();
+		char command = readNextByte();
 		switch(command)
 		{
 			case (char)0x34: //rechts
@@ -42,8 +48,8 @@ void drive()
 			}
 			set_motors(rechtsL,rechts);
 			break;
-		
-		
+			
+			
 			case (char)0x33: //links
 			vooruit = 100;
 			achteruit = -100;
@@ -57,8 +63,8 @@ void drive()
 			}
 			set_motors(links,linksR);
 			break;
-		
-		
+			
+			
 			case (char)0x32: //achteruit
 			rechts = -50;
 			rechtsL = 50;
@@ -72,8 +78,8 @@ void drive()
 			}
 			set_motors(achteruit,achteruit);
 			break;
-		
-		
+			
+			
 			case (char)0x31: //vooruit
 			rechts = -50;
 			rechtsL = 50;
@@ -87,8 +93,8 @@ void drive()
 			}
 			set_motors(vooruit,vooruit);
 			break;
-		
-		
+			
+			
 			case (char)0x35: //geen knop
 			rechts = -50;
 			rechtsL = 50;
@@ -102,7 +108,7 @@ void drive()
 			case (char)0x36:
 			escaped = 1;
 			break;
-		
+			
 			default:
 			clear();
 			print("Bad cmd");
@@ -124,11 +130,11 @@ void drive()
 
 unsigned char read_index = 0;
 
-char read_next_byte()
+char readNextByte()
 {
 	while(serial_get_received_bytes() == read_index)
 	{
-		play_check();		
+		play_check();
 	}
 	char ret = buffer[read_index];
 	read_index ++;
