@@ -1,7 +1,12 @@
-#include "manual.h"
-#include <pololu/3pi.h>
+#include "FindLine.h"
 #include "StockRoom.h"
-#include "OrderReceive.h"
+#include "MazeSolve.h"
+#include "Charging.h"
+#include "ComRead.h"
+#include "ManualDrive.h"
+#include <pololu/3pi.h>
+#include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 
 char buffer[100];
 
@@ -19,29 +24,28 @@ int getOrder() // get order from wixel
 	switch(data)
 	{
 		case(char)0x30:
-		//xOrder[orderIndex] = 0;
 		return 0;
 		break;
 		
 		case(char)0x31:
-		//xOrder[orderIndex] = 1;
 		return 1;
 		break;
 		
 		case(char)0x32:
-		//xOrder[orderIndex] = 2;
 		return 2;
 		break;
 		
 		case(char)0x33:
-		//xOrder[orderIndex] = 3;
 		return 3;
 		break;
 		
 		
 		case(char)0x34:
-		//xOrder[orderIndex] = 4;
 		return 4;
+		break;
+		
+		case(char)0x38:
+		return 5;
 		break;
 	}
 }
@@ -95,7 +99,7 @@ void receiveOrderToBreak()
 		lcd_goto_xy(0,1);
 		print("ncy");
 		wait_for_button_press(BUTTON_B); // wait on button press to try to continue, otherwise reboot
-		wait_for_button_release(BUTTON_B); 
+		wait_for_button_release(BUTTON_B);
 	}
 	else if(byteStop == 0xFE)
 	{
