@@ -1,21 +1,12 @@
-/* Robotrun - an application for the Pololu 3pi Robot
- *
- * This application uses the Pololu AVR C/C++ Library.  For help, see:
- * -User's guide: http://www.pololu.com/docs/0J20
- * -Command reference: http://www.pololu.com/docs/0J18
- *
- * Created: 3/18/2023 11:16:12 AM
- *  Author: Kasper
- */
-
-/*
- * Part of this code was derived but not copied from Pololu at https://www.pololu.com/docs/0J21/8.e
- * Though this isn't a copy or just plain rewritten in different variable names large parts do look alike
- */
-
-#include <pololu/3pi.h>
 #include "FindLine.h"
+#include "StockRoom.h"
 #include "MazeSolve.h"
+#include "Charging.h"
+#include "ComRead.h"
+#include "ManualDrive.h"
+#include <pololu/3pi.h>
+#include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 
 char arrayToStockroom[128] = {0};
 
