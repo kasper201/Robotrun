@@ -1,18 +1,12 @@
-/* ROBO_RUN - an application for the Pololu 3pi Robot
-*
-* This application uses the Pololu AVR C/C++ Library.  For help, see:
-* -User's guide: http://www.pololu.com/docs/0J20
-* -Command reference: http://www.pololu.com/docs/0J18
-*
-* Created: 3/2/2023 10:40:48 AM
-*  Author: mikvb
-*/
 #include "FindLine.h"
 #include "StockRoom.h"
 #include "MazeSolve.h"
 #include "Charging.h"
 #include "ComRead.h"
+#include "ManualDrive.h"
 #include <pololu/3pi.h>
+#include <avr/pgmspace.h>
+#include <pololu/PololuQTRSensors.h>
 
 enum STATE{init, stockroom, charge, manual, home, lost};
 enum STATE cSTATE = init;
