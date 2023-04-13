@@ -20,6 +20,8 @@ void stockroomRoutine()
 	followLine(&crossing, 0);
 	crossing = 0;
 
+	int package = 0;
+
 	facing = minX;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
@@ -47,29 +49,41 @@ void stockroomRoutine()
 		play("o5 c#" );
 		delay_ms(200);
 		clear();
+		
 		switch(facing) //turn facing minus X if not
 		{
 			case minY:
 			turn(1);
 			facing = minX;
 			break;
+			
 			case plusX:
 			turn(2);
 			facing = minX;
 			break;
+			
 			case plusY:
 			turn(3);
 			facing = minX;
 			break;
+			
+			case minX:
+			break;
 		}
-		nextRound(); //decides witch packages are next
+		package++;
+		//nextRound(); //decides witch packages are next
+		
 		clear();
-		print_long(p1.Xpackage);
+		//print_long(p1.Xpackage);
+		
 		findPackageX(); //go to the X
+		
 		delay_ms(500);
+		
 		findPackageY();	//get all the packages on this X
 	}
 	TurnBack();//drive back to the maze
+	
 	delay_ms(100);
 	solveMaze();
 	delay_ms(100);
@@ -81,7 +95,7 @@ void stockroomRoutine()
 	set_motors(0,0);
 	delay_ms(100);
 }
-
+/*
 void nextRound()
 {
 	p1.Xpackage = 0;
@@ -122,6 +136,8 @@ void nextRound()
 					p1.amountOfX++;
 					break;
 				}
+				o1.Xorders[teller] = 5;
+				o1.Yorders[teller] = 5;
 			}
 		}
 		
@@ -132,9 +148,10 @@ void nextRound()
 		if(p1.Xpackage==5)
 		{
 			o1.packageAmount = 0;
+			break;
 		}
 	}
-}
+}*/
 
 void findPackageX()
 {
@@ -341,13 +358,18 @@ void TurnBack()
 		turn(1);
 		facing=minY;
 		break;
+		
 		case plusY:
 		turn(2);
 		facing=minY;
 		break;
+		
 		case minX:
 		turn(3);
 		facing=minY;
+		break;
+		
+		case minY:
 		break;
 	}
 	if(p1.Ycurrent != 0)
@@ -428,16 +450,24 @@ void turnToY(int y,int ccrossing)
 			if(ccrossing = 2)
 			{
 				turn(1);
+				clear();
+				print("help");
+				lcd_goto_xy(0,1);
+				print("me");
+				play("o5 c#" );
+				delay_ms(10000);
+				facing = plusY;
 			}
 			else if(ccrossing = 3)
 			{
 				turn(3);
+				facing = minY;
 			}
 			else
 			{
 				turn(2);
+				facing = minY;
 			}
-			facing = minY;
 		}
 		break;
 	}
