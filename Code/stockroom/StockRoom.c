@@ -8,30 +8,22 @@
 #include <avr/pgmspace.h>
 #include <pololu/PololuQTRSensors.h>
 
-struct am{int amountOfZero, amountOfOne, amountOfTwo, amountOfThree, amountOfFour;};
-struct am amount;
-
 void stockroomRoutine()
 {
 	solveMaze();
 	delay_ms(100);
-	int crossing = 0;
+	int *bcrossing = 0;
 	delay_ms(100);
-	followLine(&crossing, 0);
-	crossing = 0;
+	followLine(&bcrossing, 0);
+	bcrossing = 0;
 
 	int package = 0;
 
-	facing = minX;
+	facing = plusX;
 	p1.Xcurrent = 0;
 	p1.Ycurrent = 0;
 	p1.Xpackage = 0;
-	amount.amountOfZero = 0;
-	amount.amountOfOne = 0;
-	amount.amountOfTwo = 0;
-	amount.amountOfThree = 0;
-	amount.amountOfFour = 0;
-	p1.amountOfX = 0;
+	p1.Ypackage = 0;
 	
 	clear();
 	print("calcul");
@@ -49,38 +41,13 @@ void stockroomRoutine()
 		play("o5 c#" );
 		delay_ms(200);
 		clear();
+
+		p1.Xpackage = o1.Xorders[package];
+		p1.Ypackage = o1.Yorders[package];
+
+		findPackage(&bcrossing); //go to the package
 		
-		switch(facing) //turn facing minus X if not
-		{
-			case minY:
-			turn(1);
-			facing = minX;
-			break;
-			
-			case plusX:
-			turn(2);
-			facing = minX;
-			break;
-			
-			case plusY:
-			turn(3);
-			facing = minX;
-			break;
-			
-			case minX:
-			break;
-		}
 		package++;
-		//nextRound(); //decides witch packages are next
-		
-		clear();
-		//print_long(p1.Xpackage);
-		
-		findPackageX(); //go to the X
-		
-		delay_ms(500);
-		
-		findPackageY();	//get all the packages on this X
 	}
 	TurnBack();//drive back to the maze
 	
@@ -95,257 +62,194 @@ void stockroomRoutine()
 	set_motors(0,0);
 	delay_ms(100);
 }
-/*
-void nextRound()
-{
-	p1.Xpackage = 0;
-	p1.amountOfX = 0;
-	amount.amountOfZero = 0;
-	amount.amountOfOne = 0;
-	amount.amountOfTwo = 0;
-	amount.amountOfThree = 0;
-	amount.amountOfFour = 0;
-	
-	while(p1.amountOfX==0)
-	{
-		
-		for(int teller=0; teller<o1.packageAmount; teller++)
-		{
-			if(o1.Xorders[teller]==p1.Xpackage)
-			{
-				switch(o1.Yorders[teller])
-				{
-					case 0:
-					amount.amountOfZero++;
-					p1.amountOfX++;
-					break;
-					case 1:
-					amount.amountOfOne++;
-					p1.amountOfX++;
-					break;
-					case 2:
-					amount.amountOfTwo++;
-					p1.amountOfX++;
-					break;
-					case 3:
-					amount.amountOfThree++;
-					p1.amountOfX++;
-					break;
-					case 4:
-					amount.amountOfFour++;
-					p1.amountOfX++;
-					break;
-				}
-				o1.Xorders[teller] = 5;
-				o1.Yorders[teller] = 5;
-			}
-		}
-		
-		if(p1.amountOfX==0)
-		{
-			p1.Xpackage++;
-		}
-		if(p1.Xpackage==5)
-		{
-			o1.packageAmount = 0;
-			break;
-		}
-	}
-}*/
 
-void findPackageX()
+void findPackage(int *crossing)
 {
-	int crossing = 0;
-	while(p1.Xcurrent!=p1.Xpackage) //drive until the X coords is reached
+	turnToX(p1.Xpackage,crossing);
+	
+	while(p1.Xcurrent!=p1.Xpackage) //drive until the y coords is reached
 	{
 		crossing = 0;
 		followLine(&crossing, 0);
-		if(crossing!=0)
+		if(crossing != 0)
 		{
 			turn(0);
+		}
+		if(facing == plusX)
+		{
 			p1.Xcurrent++;
 		}
+		if(facing == minX)
+		{
+			p1.Xcurrent--;
+		}
+	}
+	
+	clear();
+	print("X");
+	lcd_goto_xy(0,1);
+	print("reached");
+	play("o5 c#" );
+	delay_ms(100);
+
+	turnToY(p1.Ypackage,crossing);
+	
+	while(p1.Ycurrent!=p1.Ypackage) //drive until the y coords is reached
+	{
+		crossing = 0;
+		followLine(&crossing, 0);
+		if(crossing != 0)
+		{
+			turn(0);
+		}
+		if(facing == plusY)
+		{
+			p1.Ycurrent++;
+		}
+		if(facing == minY)
+		{
+			p1.Ycurrent--;
+		}
+	}
+	
+	clear();
+	print("order");
+	lcd_goto_xy(0,1);
+	print("reached");
+	play("o5 c#" );
+	delay_ms(1000);
+	o1.packageAmount--;
+}
+
+void turnToX(int x,int ccrossing)
+{
+	switch(facing)
+	{
+		case plusX:
+		if(p1.Xcurrent<x)
+		{
+			turn(0);
+			facing = plusX;
+		}
+		else
+		{
+			turn(2);
+			facing = minX;
+		}
+		break;
+		
+		
+		case minY:
+		if(p1.Xcurrent<x)
+		{
+			turn(1);
+			facing = plusX;
+		}
+		else
+		{
+			turn(3);
+			facing = minX;
+		}
+		break;
+		
+		
+		case minX:
+		if(p1.Xcurrent<x)
+		{
+			turn(2);
+			facing = plusX;
+		}
+		else
+		{
+			turn(0);
+			facing = minX;
+		}
+		break;
+		
+		
+		case plusY:
+		if(p1.Xcurrent<x)
+		{
+			turn(3);
+			facing = plusX;
+		}
+		else
+		{
+			turn(1);
+			facing = minX;
+		}
+		break;
 	}
 }
 
-void findPackageY()
+void turnToY(int y,int ccrossing)
 {
-	int crossing = 0;
-	while(p1.amountOfX != 0)
+	switch(facing) //turn facing the wanted y
 	{
-		delay_ms(500);
-		
-		if(amount.amountOfFour>0)
+		case plusX:
+		if(p1.Ycurrent<y)
 		{
-			turnToY(4,crossing);
-			
-			while(p1.Ycurrent<=4) //drive until the y coords is reached
-			{
-				crossing = 0;
-				followLine(&crossing, 0);
-				if(crossing != 0)
-				{
-					turn(0);
-				}
-				if(facing == plusY)
-				{
-					p1.Ycurrent++;
-				}
-				if(facing == minY)
-				{
-					p1.Ycurrent--;
-				}
-			}
-			amount.amountOfFour--;
-			clear();
-			print("order");
-			lcd_goto_xy(0,1);
-			print("reached");
-			play("o5 c#" );
-			delay_ms(1000);
-			p1.Ycurrent = 4;
-			o1.packageAmount--;
-			p1.amountOfX--;
+			turn(1);
+			facing = plusY;
 		}
-		
-		if(amount.amountOfThree>0)
+		else
 		{
-			turnToY(3,crossing);
-			
-			while(p1.Ycurrent!=3) //drive until the y coords is reached
-			{
-				crossing = 0;
-				followLine(&crossing, 0);
-				if(crossing != 0)
-				{
-					turn(0);
-				}
-				if(facing == plusY)
-				{
-					p1.Ycurrent++;
-				}
-				if(facing == minY)
-				{
-					p1.Ycurrent--;
-				}
-			}
-			
-			amount.amountOfThree--;
-			clear();
-			print("order");
-			lcd_goto_xy(0,1);
-			print("reached");
-			play("o5 c#" );
-			delay_ms(1000);
-			p1.Ycurrent = 3;
-			o1.packageAmount--;
-			p1.amountOfX--;
+			turn(3);
+			facing = minY;
 		}
+		break;
 		
-		
-		if(amount.amountOfTwo>0)
+		case minY:
+		if(p1.Ycurrent<y)
 		{
-			turnToY(2,crossing);
-			
-			while(p1.Ycurrent!=2) //drive until the y coords is reached
-			{
-				crossing = 0;
-				followLine(&crossing, 0);
-				if(crossing != 0)
-				{
-					turn(0);
-				}
-				if(facing == plusY)
-				{
-					p1.Ycurrent++;
-				}
-				else if(facing == minY)
-				{
-					p1.Ycurrent--;
-				}
-			}
-			
-			amount.amountOfTwo--;
-			clear();
-			print("order");
-			lcd_goto_xy(0,1);
-			print("reached");
-			play("o5 c#" );
-			delay_ms(1000);
-			p1.Ycurrent = 2;
-			o1.packageAmount--;
-			p1.amountOfX--;
+			turn(2);
+			facing = plusY;
 		}
-		
-		
-		if(amount.amountOfOne>0)
+		else
 		{
-			turnToY(1,crossing);
-			
-			while(p1.Ycurrent!=1) //drive until the y coords is reached
-			{
-				crossing = 0;
-				followLine(&crossing, 0);
-				if(crossing != 0)
-				{
-					turn(0);
-				}
-				if(facing == plusY)
-				{
-					p1.Ycurrent++;
-				}
-				if(facing == minY)
-				{
-					p1.Ycurrent--;
-				}
-			}
-			
-			amount.amountOfOne--;
-			clear();
-			print("order");
-			lcd_goto_xy(0,1);
-			print("reached");
-			play("o5 c#" );
-			delay_ms(1000);
-			p1.Ycurrent = 1;
-			o1.packageAmount--;
-			p1.amountOfX--;
+			turn(0);
+			facing = minY;
 		}
+		break;
 		
-		
-		if(amount.amountOfZero>0)
+		case minX:
+		if(p1.Ycurrent<y)
 		{
-			turnToY(0,crossing);
-			
-			while(p1.Ycurrent!=0) //drive until the y coords is reached
-			{
-				crossing = 0;
-				followLine(&crossing, 0);
-				if(crossing != 0)
-				{
-					turn(0);
-				}
-				if(facing == plusY)
-				{
-					p1.Ycurrent++;
-				}
-				if(facing == minY)
-				{
-					p1.Ycurrent--;
-				}
-			}
-			
-			amount.amountOfZero--;
-			clear();
-			print("order");
-			lcd_goto_xy(0,1);
-			print("reached");
-			play("o5 c#" );
-			delay_ms(1000);
-			p1.Ycurrent = 0;
-			o1.packageAmount--;
-			p1.amountOfX--;
+			turn(3);
+			facing = plusY;
 		}
+		else
+		{
+			turn(1);
+			facing = minY;
+		}
+		break;
+		
+		case plusY:
+		if(p1.Ycurrent<y)
+		{
+			turn(0);
+			facing = plusY;
+		}
+		else
+		{
+			if(ccrossing = 2)
+			{
+				turn(1);
+				facing = plusY;
+			}
+			else if(ccrossing = 3)
+			{
+				turn(3);
+				facing = minY;
+			}
+			else
+			{
+				turn(2);
+				facing = minY;
+			}
+		}
+		break;
 	}
 }
 
@@ -354,7 +258,7 @@ void TurnBack()
 	int crossing = 0;
 	switch(facing)
 	{
-		case plusX:
+		case minX:
 		turn(1);
 		facing=minY;
 		break;
@@ -364,7 +268,7 @@ void TurnBack()
 		facing=minY;
 		break;
 		
-		case minX:
+		case plusX:
 		turn(3);
 		facing=minY;
 		break;
@@ -393,82 +297,5 @@ void TurnBack()
 		{
 			turn(0);
 		}
-	}
-}
-
-void turnToY(int y,int ccrossing)
-{
-	switch(facing) //turn facing minus X
-	{
-		case minX:
-		if(p1.Ycurrent<y)
-		{
-			turn(1);
-			facing = plusY;
-		}
-		else
-		{
-			turn(3);
-			facing = minY;
-		}
-		break;
-		
-		case minY:
-		if(p1.Ycurrent<y)
-		{
-			turn(2);
-			facing = plusY;
-		}
-		else
-		{
-			turn(0);
-			facing = minY;
-		}
-		break;
-		
-		case plusX:
-		if(p1.Ycurrent<y)
-		{
-			turn(3);
-			facing = plusY;
-		}
-		else
-		{
-			turn(1);
-			facing = minY;
-		}
-		break;
-		
-		case plusY:
-		if(p1.Ycurrent<y)
-		{
-			turn(0);
-			facing = plusY;
-		}
-		else
-		{
-			if(ccrossing = 2)
-			{
-				turn(1);
-				clear();
-				print("help");
-				lcd_goto_xy(0,1);
-				print("me");
-				play("o5 c#" );
-				delay_ms(10000);
-				facing = plusY;
-			}
-			else if(ccrossing = 3)
-			{
-				turn(3);
-				facing = minY;
-			}
-			else
-			{
-				turn(2);
-				facing = minY;
-			}
-		}
-		break;
 	}
 }
