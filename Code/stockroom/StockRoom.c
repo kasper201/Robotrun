@@ -66,7 +66,6 @@ void stockroomRoutine()
 void findPackage(int *crossing)
 {
 	turnToX(p1.Xpackage,crossing);
-	
 	while(p1.Xcurrent!=p1.Xpackage) //drive until the y coords is reached
 	{
 		crossing = 0;
@@ -89,11 +88,9 @@ void findPackage(int *crossing)
 	print("X");
 	lcd_goto_xy(0,1);
 	print("reached");
-	play("o5 c#" );
-	delay_ms(100);
+	delay_ms(300);
 
 	turnToY(p1.Ypackage,crossing);
-	
 	while(p1.Ycurrent!=p1.Ypackage) //drive until the y coords is reached
 	{
 		crossing = 0;
@@ -117,7 +114,7 @@ void findPackage(int *crossing)
 	lcd_goto_xy(0,1);
 	print("reached");
 	play("o5 c#" );
-	delay_ms(1000);
+	delay_ms(2000);
 	o1.packageAmount--;
 }
 
@@ -131,6 +128,8 @@ void turnToX(int x,int ccrossing)
 			turn(0);
 			facing = plusX;
 		}
+		else if(p1.Xcurrent==x)
+		{}
 		else
 		{
 			turn(2);
@@ -145,6 +144,8 @@ void turnToX(int x,int ccrossing)
 			turn(1);
 			facing = plusX;
 		}
+		else if(p1.Xcurrent==x)
+		{}
 		else
 		{
 			turn(3);
@@ -159,6 +160,8 @@ void turnToX(int x,int ccrossing)
 			turn(2);
 			facing = plusX;
 		}
+		else if(p1.Xcurrent==x)
+		{}
 		else
 		{
 			turn(0);
@@ -173,6 +176,8 @@ void turnToX(int x,int ccrossing)
 			turn(3);
 			facing = plusX;
 		}
+		else if(p1.Xcurrent==x)
+		{}
 		else
 		{
 			turn(1);
@@ -192,6 +197,8 @@ void turnToY(int y,int ccrossing)
 			turn(1);
 			facing = plusY;
 		}
+		else if(p1.Ycurrent==y)
+		{}
 		else
 		{
 			turn(3);
@@ -205,6 +212,8 @@ void turnToY(int y,int ccrossing)
 			turn(2);
 			facing = plusY;
 		}
+		else if(p1.Ycurrent==y)
+		{}
 		else
 		{
 			turn(0);
@@ -218,6 +227,8 @@ void turnToY(int y,int ccrossing)
 			turn(3);
 			facing = plusY;
 		}
+		else if(p1.Ycurrent==y)
+		{}
 		else
 		{
 			turn(1);
@@ -231,6 +242,8 @@ void turnToY(int y,int ccrossing)
 			turn(0);
 			facing = plusY;
 		}
+		else if(p1.Ycurrent==y)
+		{}
 		else
 		{
 			if(ccrossing = 2)
@@ -256,28 +269,28 @@ void turnToY(int y,int ccrossing)
 void TurnBack()
 {
 	int crossing = 0;
-	switch(facing)
-	{
-		case minX:
-		turn(1);
-		facing=minY;
-		break;
-		
-		case plusY:
-		turn(2);
-		facing=minY;
-		break;
-		
-		case plusX:
-		turn(3);
-		facing=minY;
-		break;
-		
-		case minY:
-		break;
-	}
 	if(p1.Ycurrent != 0)
 	{
+		switch(facing)
+		{
+			case minX:
+			turn(1);
+			facing=minY;
+			break;
+			
+			case plusY:
+			turn(2);
+			facing=minY;
+			break;
+			
+			case plusX:
+			turn(3);
+			facing=minY;
+			break;
+			
+			case minY:
+			break;
+		}
 		while(crossing!=1 && crossing!=5 && crossing!=7)
 		{
 			crossing = 0;
@@ -288,7 +301,27 @@ void TurnBack()
 			}
 		}
 	}
-	turn(3);
+	
+	switch(facing)
+	{
+		case minX:
+		break;
+		
+		case plusY:
+		turn(1);
+		facing=minX;
+		break;
+		
+		case plusX:
+		turn(3);
+		facing=minX;
+		break;
+		
+		case minY:
+		turn(3);
+		facing=minX;
+		break;
+	}
 	while(crossing!=7)
 	{
 		crossing = 0;
