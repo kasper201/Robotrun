@@ -12,15 +12,25 @@ void chargeRoutine()
 {
 	delay_ms(100);
 	solveMaze();
+	
 	delay_ms(100);
 	passingToCharge();
+	
 	delay_ms(100);
-	followCharge(0);
-	timeToCharge();
-	delay_ms(100);
+	followCharge();
+	
+	clear();
+	print("FLOEFS");
+	lcd_goto_xy(0,1);
+	print("SLEEPS");
+	play("o5 c#" );
+	
+	delay_ms(10000);
 	passingToCharge2();
+	
 	delay_ms(100);
 	solveMaze();
+	
 	delay_ms(100);
 	followLine(0,0);
 	set_motors(0,0);
@@ -75,26 +85,4 @@ void passingToCharge2()
 		crossing=0;
 		followLine(&crossing, 0);
 	}
-}
-
-void batteryRead( unsigned int *percentage)
-{
-	int average;
-	
-	for(int i = 0; i < 10; i++)
-	{
-		unsigned int voltage = read_battery_millivolts_3pi();
-		average += voltage;
-	}
-	*percentage = (((*percentage-4500)/5));
-}
-
-void timeToCharge()
-{
-	clear();
-	print("FLOEFS");
-	lcd_goto_xy(0,1);
-	print("SLEEPS");
-	play("o5 c#" );
-	delay_ms(10000);
 }
