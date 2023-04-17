@@ -7,11 +7,10 @@
 #include "readKeys.c"
 #include "leesInteger.h"
 #include "leesInteger.c"
-#include "serial.c"
 #include "sendOrders.h"
 #include "serialReceive.c"
+#include "batterySimulation.h"
 
-// parts of this code are copied from the internet. These are opensource codes and are from: https://www.codeincodeblock.com/2011/03/move-console-windows-using-codeblock.html
 
 HWND WINAPI GetConsoleWindowNT(void)
 {
@@ -39,16 +38,6 @@ void resizeWindow()
     MoveWindow(hWnd,600,250,500,300,TRUE);
 }
 
-void delay(int second){
-
-int milsec = 1000 * second;
-
-clock_t startTime = clock();
-
-while(clock() < (startTime + milsec));
-
-}
-
 void printInit()
 {
     printf("------------- CONSOLE APPLICATIE ROBOTRUN -------------\n\n");
@@ -67,7 +56,7 @@ void printInit()
 
 void printMenu()
 {
-    printf("Menu:\n\n1. Ga naar het bestellingsmenu\n2. Ga naar afstandsbesturingsmenu\n");
+    printf("Menu:\n\n1. Ga naar het bestellingsmenu\n2. Ga naar afstandsbesturingsmenu\n3. Simuleer batterijpercentage\n4. Simuleer spin\n", '%');
 }
 
 void printManualMenu()
@@ -80,24 +69,36 @@ void printOrderMenu()
     printf("orders:\n\n");
 }
 
+void printBatterySimulation()
+{
+    printf("Batterijsimulatie:\nDruk op toets 1-9\nDeze staan voor percentages 10-90 procent.\n");
+}
+
+void printSpinning()
+{
+    printf("Spin menu:\n\n1. Simuleer spin\n2. Ga terug naar het menu\n");
+}
 
 int main(void)
 {
-    enum STATES{init, menu, manualOverride, orders};
+    enum STATES{init, menu, manualOverride, orders, batterySimulation, spinning};
     enum STATES state = menu;
 
     resizeWindow();
 
     printInit();
-    delay(4);
+    delay(2000);
     system("cls");
+    printf("Voer hier de comport in als volgt: 'COMx'\n");
+    fgets(myPort, sizeof(myPort), stdin);
+
     while(1)
     {
         int selection;
         switch(state)
         {
-
             case menu:
+
                 printMenu();
                 //serialReceive();
                 //serialReceive();
@@ -110,12 +111,22 @@ int main(void)
                 {
                     state = manualOverride;
                 }
+                else if(selection == 51) // "3" was pressed
+                {
+                    state = batterySimulation;
+                }
+                else if(selection == 52) // "4" was pressed
+                {
+                    state = spinning;
+                }
                 system("cls");
                 break;
 
             case manualOverride:
+
                 printManualMenu();
-                while(manualDrive()) //manual drive returns 1, exept if the user presses esc to escape this menu.
+                sendSerialHex(0x02);
+                while(manualDrive()) //manual drive returns 1, except if the user presses escape to escape this menu.
                 {
 
                 }
@@ -126,6 +137,7 @@ int main(void)
                 }
                 system("cls");
                 break;
+
             case orders:
 
                 printOrderMenu();
@@ -137,16 +149,30 @@ int main(void)
                 system("cls");
                 break;
 
+            case batterySimulation:
 
+                printBatterySimulation();
+                while(batteryMenu())
+                {
 
+                }
+                state = menu;
+                system("cls");
+                break;
+
+            case spinning:
+
+                printSpinning();
+                while(spinSim())
+                {
+
+                }
+                state = menu;
+                system("cls");
+                break;
         }
 
     }
-
-
-
-
-
     return 0;
 }
 
