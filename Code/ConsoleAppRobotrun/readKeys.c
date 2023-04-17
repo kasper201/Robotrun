@@ -1,7 +1,9 @@
 #include <conio.h>
 #include <stdio.h>
 #include "readKeys.h"
-int readKeys() {
+
+int readKeys()
+{
     int ch;
     while (1) {
             ch = getch(); // read the next character
@@ -20,5 +22,4 @@ int readKeys() {
                     break;
             }
     }
-    //return 0;
 }
